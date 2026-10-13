@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1E3A8A">
-    <title>LexiTrek 3.5: Borneo Summit</title>
+    <title>LexiTrek 3.6: Summit Explosion</title>
     <link rel="manifest" href="./manifest.json">
     
     <style>
@@ -88,6 +88,27 @@
         .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out; }
         .modal-card { background: white; width: 100%; max-width: 450px; border-radius: 20px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-height: 92vh; overflow-y: auto; }
 
+        /* 🔥 NEW SUMMIT FIREWORKS MODAL 🔥 */
+        .summit-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.9); z-index: 100; display: none; align-items: center; justify-content: center; overflow: hidden; }
+        .summit-overlay.open { display: flex; animation: bgFadeIn 0.3s ease-out; }
+        @keyframes bgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .summit-card { background: linear-gradient(135deg, #FDE047, #F59E0B); padding: 40px 20px; border-radius: 28px; text-align: center; width: 90%; max-width: 420px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); transform: scale(0); border: 6px solid white; position: relative; z-index: 101; }
+        .summit-overlay.open .summit-card { animation: explosionPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes explosionPop { 0% { transform: scale(0) rotate(-10deg); opacity: 0; } 50% { transform: scale(1.1) rotate(5deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+
+        .summit-icon { font-size: 85px; margin-bottom: -15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        .summit-title { font-size: 38px; font-weight: 900; color: white; text-transform: uppercase; text-shadow: 3px 5px 0px #B45309, -1px -1px 0 #B45309; margin-bottom: 15px; letter-spacing: 2px; line-height: 1.1; }
+        .summit-msg { font-size: 16px; font-weight: 800; color: #78350F; margin-bottom: 30px; line-height: 1.4; padding: 0 10px; }
+        .summit-btn { background: white; color: #D97706; border: none; padding: 18px 25px; border-radius: 18px; font-size: 22px; font-weight: 900; cursor: pointer; width: 100%; box-shadow: 0 6px 0px #B45309; transition: transform 0.1s, box-shadow 0.1s; text-transform: uppercase; }
+        .summit-btn:active { transform: translateY(6px); box-shadow: 0 0px 0px #B45309; }
+
+        /* Offline Fireworks Particles */
+        .fireworks-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; overflow: hidden; }
+        .particle { position: absolute; width: 12px; height: 12px; border-radius: 50%; opacity: 1; animation: shoot 1.2s ease-out forwards; }
+        @keyframes shoot { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
+
+        /* UI Content */
         .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 6px; }
         .mode-badge { font-size: 10px; padding: 4px 8px; border-radius: 6px; background: #DBEAFE; color: #1E40AF; font-weight: 800; text-transform: uppercase; }
         .stake-badge { font-size: 10px; font-weight: 800; color: #059669; background: #D1FAE5; padding: 4px 8px; border-radius: 6px; }
@@ -140,7 +161,7 @@
 
     <!-- Top Navbar -->
     <div class="navbar">
-        <div class="logo" onclick="showScreen('board-screen')">⛰️ LexiTrek 3.5</div>
+        <div class="logo" onclick="showScreen('board-screen')">⛰️ LexiTrek 3.6</div>
         <div class="stats">
             <div class="badge"><span class="status-dot" id="net-dot"></span><span id="net-text">Online</span></div>
             <div class="badge" onclick="openProfileModal()" style="cursor:pointer;" title="Edit Student Profile"><span id="nav-avatar">🧗</span> <span id="nav-name">Student</span></div>
@@ -161,7 +182,7 @@
                 <button class="mini-btn" onclick="showProgressLog()">📊 Data & Log</button>
             </div>
 
-            <!-- Power-Up Gear Shop (Scaffolding) -->
+            <!-- Power-Up Gear Shop -->
             <div class="gear-row">
                 <div class="gear-card">
                     <div>
@@ -203,15 +224,14 @@
             </div>
         </div>
 
-        <!-- RESEARCHER DATA & PROGRESS LOG SCREEN -->
+        <!-- RESEARCHER DATA & LOG SCREEN -->
         <div id="log-screen" class="screen">
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h3 style="color: var(--primary); font-size:16px;">📊 Student Analytics & Research Log</h3>
+                    <h3 style="color: var(--primary); font-size:16px;">📊 Student Analytics Log</h3>
                     <button class="mini-btn" onclick="showScreen('board-screen')">← Back to Map</button>
                 </div>
 
-                <!-- Empirical KPI Metrics -->
                 <div class="kpi-grid">
                     <div class="kpi-box">
                         <div class="kpi-val" id="kpi-recog">0%</div>
@@ -231,15 +251,14 @@
                     </div>
                 </div>
 
-                <!-- Researcher Export Buttons -->
                 <div class="export-row">
-                    <button class="export-btn" onclick="exportResearchCSV()">📥 Download CSV (SPSS)</button>
-                    <button class="share-btn" onclick="copyReportForTeacher()">📲 Copy Teacher Report</button>
+                    <button class="export-btn" onclick="exportResearchCSV()">📥 Download CSV</button>
+                    <button class="share-btn" onclick="copyReportForTeacher()">📲 Copy Summary</button>
                 </div>
 
-                <label style="font-size:11px; font-weight:800; color:var(--text-light); display:block; margin:12px 0 5px;">PULSE 2 CURRICULUM MODULE FILTER:</label>
+                <label style="font-size:11px; font-weight:800; color:var(--text-light); display:block; margin:12px 0 5px;">MODULE FILTER:</label>
                 <select id="module-select" style="width:100%; padding:10px; border-radius:10px; border:2px solid #E5E7EB; font-weight:700; margin-bottom:14px; font-size:13px;" onchange="saveProgress()">
-                    <option value="ALL">All 5 Modules (Adaptive Spaced Mix)</option>
+                    <option value="ALL">All 5 Modules (Adaptive Mix)</option>
                     <option value="PERSONAL IDENTITY">1. Personal Identity & Routine</option>
                     <option value="SCHOOL & EDUCATION">2. School & Education</option>
                     <option value="FREE TIME & HOBBIES">3. Free Time & Hobbies</option>
@@ -250,8 +269,8 @@
                 <div id="log-list"></div>
 
                 <div style="display:flex; gap:8px; margin-top:16px;">
-                    <button onclick="openProfileModal()" style="flex:1; padding:11px; border-radius:10px; border:1px solid #CBD5E1; background:#F8FAFC; font-weight:700; font-size:12px; cursor:pointer;">👤 Change Student ID</button>
-                    <button onclick="resetProgress()" style="flex:1; padding:11px; border-radius:10px; border:1px solid #FCA5A5; background:#FEF2F2; color:#DC2626; font-weight:700; font-size:12px; cursor:pointer;">🗑️ Reset All Data</button>
+                    <button onclick="openProfileModal()" style="flex:1; padding:11px; border-radius:10px; border:1px solid #CBD5E1; background:#F8FAFC; font-weight:700; font-size:12px; cursor:pointer;">👤 Edit Profile</button>
+                    <button onclick="resetProgress()" style="flex:1; padding:11px; border-radius:10px; border:1px solid #FCA5A5; background:#FEF2F2; color:#DC2626; font-weight:700; font-size:12px; cursor:pointer;">🗑️ Reset Data</button>
                 </div>
             </div>
         </div>
@@ -304,11 +323,22 @@
         </div>
     </div>
 
-    <!-- STUDENT PROFILE & AVATAR MODAL -->
+    <!-- 💥 🔥 SUMMIT EXPLOSION MODAL 🔥 💥 -->
+    <div class="summit-overlay" id="summit-modal">
+        <div class="fireworks-container" id="fireworks-container"></div>
+        <div class="summit-card">
+            <div class="summit-icon">🏔️</div>
+            <h1 class="summit-title">SUMMIT<br>CONQUERED!</h1>
+            <p class="summit-msg">Outstanding job, <span id="summit-name">Climber</span>! You reached Low's Peak (+100⭐) and unlocked the Summit Medal!</p>
+            <button class="summit-btn" onclick="startNewLap()">Start Lap <span id="next-lap-num">2</span> 🚀</button>
+        </div>
+    </div>
+
+    <!-- STUDENT PROFILE MODAL -->
     <div class="modal-overlay" id="profile-modal">
         <div class="modal-card" style="text-align:center;">
             <h3 style="color:var(--primary); margin-bottom:6px;">⛺ Climber Registration</h3>
-            <p style="font-size:12px; color:var(--text-light); margin-bottom:12px;">Enter your Student Name or Class ID and choose your Borneo Climber Avatar:</p>
+            <p style="font-size:12px; color:var(--text-light); margin-bottom:12px;">Enter your Student Name and choose your Borneo Avatar:</p>
             <input type="text" id="student-name-input" class="typing-input" placeholder="e.g., Aiman_1Kreatif" style="margin-bottom:10px;">
             <div class="avatar-picker" id="avatar-picker">
                 <span class="avatar-opt selected" onclick="selectAvatar('🧗', this)">🧗</span>
@@ -317,7 +347,7 @@
                 <span class="avatar-opt" onclick="selectAvatar('🦅', this)">🦅</span>
                 <span class="avatar-opt" onclick="selectAvatar('🦏', this)">🦏</span>
             </div>
-            <button class="primary-btn" onclick="saveProfile()">Start Borneo Expedition!</button>
+            <button class="primary-btn" onclick="saveProfile()">Start Expedition!</button>
         </div>
     </div>
 
@@ -344,6 +374,13 @@
         function sfxCorrect() { playTone(523.25, 'sine', 0.12, 0); playTone(659.25, 'sine', 0.12, 100); playTone(783.99, 'sine', 0.25, 200); }
         function sfxWrong() { playTone(220, 'sawtooth', 0.18, 0); playTone(180, 'sawtooth', 0.25, 150); }
         function sfxHop() { playTone(440, 'triangle', 0.08, 0); }
+        function sfxEpicLevelUp() { 
+            // Triumphant 4-note chord for Summit
+            playTone(523.25, 'triangle', 0.15, 0); 
+            playTone(659.25, 'triangle', 0.15, 150); 
+            playTone(783.99, 'triangle', 0.15, 300); 
+            playTone(1046.50, 'sawtooth', 0.8, 450); 
+        }
 
         // Offline Vector Graphics for all 15 Pulse 2 Words
         const offlineArt = {
@@ -405,7 +442,7 @@
         let cardStartTime = 0;
         let revealedLetters = 1;
 
-        // Track Active Time-on-Task every second
+        // Track Active Time-on-Task
         setInterval(() => {
             if (!document.hidden) {
                 activeSeconds++;
@@ -457,7 +494,6 @@
             const mastered = vocabDatabase.filter(item => item.mastery >= 2).length;
             document.getElementById('mastered-display').innerText = `${mastered}/${vocabDatabase.length}`;
 
-            // Update Badges
             badgesUnlocked.forEach((unlocked, idx) => {
                 const el = document.getElementById(`badge-${idx}`);
                 if (el) el.classList.toggle('unlocked', unlocked);
@@ -476,21 +512,11 @@
 
         function buyGear(type) {
             if (type === 'hint') {
-                if (totalScore >= 20) {
-                    totalScore -= 20;
-                    hintsOwned++;
-                    sfxCorrect();
-                    saveProgress();
-                    renderBoard();
-                } else alert("Need 20 ⭐ Stars to buy a Torchlight Hint!");
+                if (totalScore >= 20) { totalScore -= 20; hintsOwned++; sfxCorrect(); saveProgress(); renderBoard(); }
+                else alert("Need 20 ⭐ Stars to buy a Torchlight Hint!");
             } else if (type === 'shield') {
-                if (totalScore >= 30) {
-                    totalScore -= 30;
-                    shieldsOwned++;
-                    sfxCorrect();
-                    saveProgress();
-                    renderBoard();
-                } else alert("Need 30 ⭐ Stars to buy Crampon Boots!");
+                if (totalScore >= 30) { totalScore -= 30; shieldsOwned++; sfxCorrect(); saveProgress(); renderBoard(); }
+                else alert("Need 30 ⭐ Stars to buy Crampon Boots!");
             }
         }
 
@@ -564,12 +590,10 @@
             if (hintsOwned <= 0) document.getElementById('use-hint-btn').style.display = 'none';
 
             if (currentCard.mastery === 0) {
-                // Eliminate 2 wrong MCQ options
                 const buttons = Array.from(document.querySelectorAll('.option-btn'));
                 let wrongBtns = buttons.filter(b => b.innerText.toLowerCase() !== currentCard.word.toLowerCase() && !b.classList.contains('hidden-opt'));
                 wrongBtns.slice(0, 2).forEach(b => b.classList.add('hidden-opt'));
             } else {
-                // Reveal next letter in Active Recall
                 revealedLetters = Math.min(currentCard.word.length - 1, revealedLetters + 2);
                 document.getElementById('scaffold-letters').innerText = formatScaffold(currentCard.word, revealedLetters);
             }
@@ -593,7 +617,7 @@
                 sfxCorrect();
                 btnElement.classList.add('correct');
                 currentCard.recogHits = (currentCard.recogHits || 0) + 1;
-                currentCard.mastery = 1; // Graduate to Active Recall
+                currentCard.mastery = 1; 
                 pendingMove = Math.floor(Math.random() * 2) + 1;
             } else {
                 sfxWrong();
@@ -626,13 +650,13 @@
                 inputEl.style.borderColor = "var(--correct)";
                 inputEl.style.backgroundColor = "#D1FAE5";
                 currentCard.recallHits = (currentCard.recallHits || 0) + 1;
-                currentCard.mastery = 2; // Fully Mastered
-                pendingMove = Math.floor(Math.random() * 3) + 2; // Power Roll 2-4
+                currentCard.mastery = 2;
+                pendingMove = Math.floor(Math.random() * 3) + 2;
             } else {
                 sfxWrong();
                 inputEl.style.borderColor = "var(--incorrect)";
                 inputEl.style.backgroundColor = "#FEE2E2";
-                currentCard.mastery = 0; // Revert to Blocked Recognition
+                currentCard.mastery = 0;
                 currentCard.errors = (currentCard.errors || 0) + 1;
                 pendingMove = mudTiles.includes(playerPos) ? -1 : 0;
             }
@@ -653,8 +677,8 @@
             } else {
                 feedbackArea.style.backgroundColor = '#FEE2E2';
                 feedbackArea.style.color = '#991B1B';
-                let slipMsg = pendingMove === -1 ? (shieldsOwned > 0 ? "🥾 Crampon Boots blocked the mudslide!" : "🌧️ Slipped back 1 tile.") : "Stay on current tile.";
-                feedbackMessage.innerText = `❌ Corrective Feedback: The word is "${correctWord.toUpperCase()}". ${slipMsg}`;
+                let slipMsg = pendingMove === -1 ? (shieldsOwned > 0 ? "🥾 Crampons blocked the mudslide!" : "🌧️ Slipped back 1 tile.") : "Stay on current tile.";
+                feedbackMessage.innerText = `❌ Feedback: The word is "${correctWord.toUpperCase()}". ${slipMsg}`;
                 streak = 0;
             }
 
@@ -662,7 +686,6 @@
             feedbackArea.style.display = 'block';
         }
 
-        // Animated Step-by-Step Climber Movement
         function closeModalAndMove() {
             document.getElementById('challenge-modal').classList.remove('open');
 
@@ -675,7 +698,6 @@
                         playerPos++;
                         stepsRemaining--;
                         sfxHop();
-                        // Unlock Base Camp Badges when passing or landing
                         if (playerPos >= 6) badgesUnlocked[0] = true;
                         if (playerPos >= 12) badgesUnlocked[1] = true;
                         if (playerPos >= 18) badgesUnlocked[2] = true;
@@ -720,19 +742,55 @@
                 statusMsg = `🌧️ On Mudslide! Be careful!`;
             }
 
+            // 💥 TRIGGER FIREWORKS MODAL INSTEAD OF ALERT 💥
             if (playerPos === 30) {
                 totalScore += 100;
-                laps++;
-                sfxCorrect();
+                saveProgress();
+                renderBoard();
+                
                 setTimeout(() => {
-                    alert(`🏔️ SUMMIT REACHED! Congratulations ${studentName || 'Climber'}! You conquered Mount Kinabalu (+100⭐) and unlocked the Low's Peak Medal! Starting Lap ${laps}!`);
-                    playerPos = 1;
-                    saveProgress();
-                    renderBoard();
+                    triggerSummitCelebration();
                 }, 350);
+            } else {
+                document.getElementById('last-roll-text').innerText = statusMsg;
+                saveProgress();
+                renderBoard();
             }
+        }
 
-            document.getElementById('last-roll-text').innerText = statusMsg;
+        /* 🔥 FIREWORKS CREATOR 🔥 */
+        function triggerSummitCelebration() {
+            sfxEpicLevelUp(); // Epic 4-note sound
+            document.getElementById('summit-name').innerText = studentName || 'Climber';
+            document.getElementById('next-lap-num').innerText = laps + 1;
+            document.getElementById('summit-modal').classList.add('open');
+            
+            const container = document.getElementById('fireworks-container');
+            container.innerHTML = '';
+            const colors = ['#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#FFFFFF'];
+            
+            // Create 80 particles
+            for (let i = 0; i < 80; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = '50%';
+                p.style.top = '50%';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 220 + 50; 
+                p.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                p.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                
+                container.appendChild(p);
+            }
+        }
+
+        function startNewLap() {
+            document.getElementById('summit-modal').classList.remove('open');
+            playerPos = 1;
+            laps++;
+            document.getElementById('last-roll-text').innerText = `🚀 Lap ${laps} started!`;
             saveProgress();
             renderBoard();
         }
@@ -755,7 +813,6 @@
             renderBoard();
         }
 
-        // Compute Empirical Analytics & Render Log
         function showProgressLog() {
             let totalRecogTries = 0, totalRecogHits = 0;
             let totalRecallTries = 0, totalRecallHits = 0;
@@ -783,7 +840,7 @@
                     <div class="log-item">
                         <div>
                             <div class="log-word">${item.word}</div>
-                            <div style="font-size:11px; color:#6B7280;">${item.theme} • Tries: ${tries} • Errors: ${item.errors || 0} • Avg Speed: ${avgSec}</div>
+                            <div style="font-size:11px; color:#6B7280;">${item.theme} • Tries: ${tries} • Errors: ${item.errors || 0} • Speed: ${avgSec}</div>
                         </div>
                         <span class="log-status" style="background:${bg}; color:${col};">${statusText}</span>
                     </div>
@@ -804,7 +861,6 @@
             showScreen('log-screen');
         }
 
-        // Export Empirical Data to CSV for SPSS / Excel Analysis
         function exportResearchCSV() {
             let csv = "Student_ID,Word,Pulse2_Module,Mastery_Stage,Total_Exposures,Recog_Attempts,Recog_Correct,Recall_Attempts,Recall_Correct,Total_Errors,Avg_Response_Time_Ms,Total_Time_On_Task_Sec\n";
             vocabDatabase.forEach(item => {
@@ -821,19 +877,17 @@
             a.click();
         }
 
-        // Copy Formatted Progress Report for WhatsApp / Teacher
         function copyReportForTeacher() {
             const mastered = vocabDatabase.filter(i => i.mastery >= 2).length;
             const mins = Math.floor(activeSeconds / 60);
-            const report = `📊 *LexiTrek 3.5 Student Report*\n👤 Student: ${studentName || 'Climber'} ${studentAvatar}\n🏔️ Summit Tile: ${playerPos}/30 (Lap ${laps})\n✅ Mastered Words: ${mastered}/15\n⭐ Score: ${totalScore} | 🔥 Streak: ${streak}\n⏱️ Time-on-Task: ${mins} mins\n🎯 Receptive Acc: ${document.getElementById('kpi-recog').innerText}\n✍️ Productive Acc: ${document.getElementById('kpi-recall').innerText}\n⚡ Avg Speed: ${document.getElementById('kpi-latency').innerText}`;
+            const report = `📊 *LexiTrek Student Report*\n👤 Student: ${studentName || 'Climber'} ${studentAvatar}\n🏔️ Summit Tile: ${playerPos}/30 (Lap ${laps})\n✅ Mastered: ${mastered}/15\n⭐ Score: ${totalScore} | 🔥 Streak: ${streak}\n⏱️ Time: ${mins} mins\n🎯 Receptive Acc: ${document.getElementById('kpi-recog').innerText}\n✍️ Productive Acc: ${document.getElementById('kpi-recall').innerText}\n⚡ Avg Speed: ${document.getElementById('kpi-latency').innerText}`;
             navigator.clipboard.writeText(report).then(() => {
-                alert("✅ Report copied to clipboard! You can now paste it into WhatsApp or Telegram for your teacher.");
+                alert("✅ Report copied! Paste it into WhatsApp or Telegram.");
             }).catch(() => {
                 prompt("Copy this report for your teacher:", report);
             });
         }
 
-        // Profile & Avatar Functions
         function openProfileModal() {
             document.getElementById('student-name-input').value = studentName;
             document.getElementById('profile-modal').classList.add('open');
