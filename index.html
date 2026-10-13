@@ -300,4 +300,280 @@
                     else if (campTiles.includes(tileNum)) { tile.classList.add('camp'); icon = '⛺'; }
 
                     if (tileNum === playerPos) {
-                        tile.classList.add('active
+                        tile.classList.add('active-tile');
+                    }
+
+                    tile.innerHTML = `
+                        <span class="tile-num">${tileNum}</span>
+                        <span class="tile-icon">${icon}</span>
+                        ${tileNum === playerPos ? '<div class="player-token">🧗</div>' : ''}
+                    `;
+                    grid.appendChild(tile);
+                });
+            }
+
+            // Update Top Stats & Zone Banner
+            document.getElementById('streak-count').innerText = streak;
+            document.getElementById('score-count').innerText = totalScore;
+            document.getElementById('pos-display').innerText = playerPos;
+            const mastered = vocabDatabase.filter(item => item.mastery >= 2).length;
+            document.getElementById('mastered-display').innerText = `${mastered}/${vocabDatabase.length}`;
+
+            const zoneNames = [
+                "Zone 1: Tamu & Health Foothills",
+                "Zone 2: School & Education Trail",
+                "Zone 3: Personal Identity Ridge",
+                "Zone 4: Free Time & Hobbies Camp",
+                "Zone 5: Travel & Low's Peak Summit"
+            ];
+            let zoneIdx = Math.min(4, Math.floor((playerPos - 1) / 6));
+            document.getElementById('zone-title').innerText = zoneNames[zoneIdx];
+        }
+
+        // Select Next Word Using Spaced Repetition Priority
+        function triggerDiceChallenge() {
+            answered = false;
+            const selectedModule = document.getElementById('module-select').value;
+            let pool = selectedModule === "ALL" ? [...vocabDatabase] : vocabDatabase.filter(item => item.theme === selectedModule);
+
+            // Prioritize words with errors or lower mastery, with slight randomization
+            pool.sort((a, b) => a.mastery - b.mastery || (b.errors || 0) - (a.errors || 0) || (0.5 - Math.random()));
+            currentCard = pool[0];
+
+            document.getElementById('theme-text').innerText = currentCard.theme;
+            document.getElementById('definition-text').innerText = currentCard.def;
+            document.getElementById('sentence-text').innerText = currentCard.sentence;
+            document.getElementById('svg-container').innerHTML = offlineArt[currentCard.word] || offlineArt['classroom'];
+            document.getElementById('feedback-area').style.display = 'none';
+
+            const recogMode = document.getElementById('recognition-mode');
+            const recallMode = document.getElementById('recall-mode');
+            const typingInput = document.getElementById('typing-input');
+            const modeBadge = document.getElementById('mode-indicator');
+            const stakeBadge = document.getElementById('stake-indicator');
+
+            if (currentCard.mastery === 0) {
+                modeBadge.innerText = "Step 1: Recognition";
+                modeBadge.style.background = "#DBEAFE";
+                modeBadge.style.color = "#1E40AF";
+                stakeBadge.innerText = "🎲 Roll 1–2 Tiles";
+                recogMode.style.display = 'grid';
+                recallMode.style.display = 'none';
+                recogMode.innerHTML = '';
+                
+                let opts = [...currentCard.options].sort(() => 0.5 - Math.random());
+                opts.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkMCQ(opt, btn, currentCard.word);
+                    recogMode.appendChild(btn);
+                });
+            } else {
+                modeBadge.innerText = "Step 2: Active Recall";
+                modeBadge.style.background = "#FEF3C7";
+                modeBadge.style.color = "#92400E";
+                stakeBadge.innerText = "⚡ Power Roll 2–4 Tiles!";
+                recogMode.style.display = 'none';
+                recallMode.style.display = 'block';
+                typingInput.value = '';
+                typingInput.disabled = false;
+                typingInput.style.borderColor = "#D1D5DB";
+                typingInput.style.backgroundColor = "white";
+            }
+
+            document.getElementById('challenge-modal').classList.add('open');
+        }
+
+        function checkMCQ(selectedWord, btnElement, correctWord) {
+            if (answered) return;
+            answered = true;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.style.pointerEvents = 'none');
+
+            const isCorrect = selectedWord.toLowerCase() === correctWord.toLowerCase();
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                currentCard.mastery = 1; // Upgrade to Active Recall next time
+                pendingMove = Math.floor(Math.random() * 2) + 1; // Roll 1-2
+            } else {
+                btnElement.classList.add('incorrect');
+                buttons.forEach(b => { if (b.innerText.toLowerCase() === correctWord.toLowerCase()) b.classList.add('correct'); });
+                currentCard.mastery = 0;
+                currentCard.errors = (currentCard.errors || 0) + 1;
+                pendingMove = mudTiles.includes(playerPos) ? -1 : 0;
+            }
+            showFeedback(isCorrect, correctWord);
+        }
+
+        function checkTypedAnswer() {
+            if (answered) return;
+            const inputEl = document.getElementById('typing-input');
+            if (!inputEl.value.trim()) return;
+            answered = true;
+            inputEl.disabled = true;
+
+            const typedWord = inputEl.value.trim().toLowerCase();
+            const correctWord = currentCard.word.toLowerCase();
+            
+            const isCorrect = typedWord === correctWord;
+            if (isCorrect) {
+                inputEl.style.borderColor = "var(--correct)";
+                inputEl.style.backgroundColor = "#D1FAE5";
+                currentCard.mastery = 2; // Fully Mastered!
+                pendingMove = Math.floor(Math.random() * 3) + 2; // Power Roll 2-4
+            } else {
+                inputEl.style.borderColor = "var(--incorrect)";
+                inputEl.style.backgroundColor = "#FEE2E2";
+                currentCard.mastery = 0; // Revert to Blocked Recognition
+                currentCard.errors = (currentCard.errors || 0) + 1;
+                pendingMove = mudTiles.includes(playerPos) ? -1 : 0;
+            }
+            showFeedback(isCorrect, correctWord);
+        }
+
+        function showFeedback(isCorrect, correctWord) {
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackMessage = document.getElementById('feedback-message');
+
+            if (isCorrect) {
+                feedbackArea.style.backgroundColor = '#D1FAE5';
+                feedbackArea.style.color = '#065F46';
+                feedbackMessage.innerText = `✅ Correct! "${correctWord.toUpperCase()}" unlocked a Dice Roll of +${pendingMove} tiles!`;
+                streak++;
+                totalScore += 10;
+            } else {
+                feedbackArea.style.backgroundColor = '#FEE2E2';
+                feedbackArea.style.color = '#991B1B';
+                let slipMsg = pendingMove === -1 ? "You slipped back 1 tile on the mudslide." : "You stay on your current tile.";
+                feedbackMessage.innerText = `❌ Corrective Feedback: The word is "${correctWord.toUpperCase()}". ${slipMsg}`;
+                streak = 0;
+            }
+
+            feedbackArea.style.display = 'block';
+        }
+
+        function closeModalAndMove() {
+            document.getElementById('challenge-modal').classList.remove('open');
+            let statusMsg = "";
+
+            if (pendingMove > 0) {
+                playerPos = Math.min(30, playerPos + pendingMove);
+                statusMsg = `🎲 Rolled +${pendingMove}!`;
+
+                // Check Special Board Tiles
+                if (vineTiles.includes(playerPos)) {
+                    playerPos = Math.min(30, playerPos + 2);
+                    totalScore += 15;
+                    statusMsg = `🌿 Vine Shortcut! +2 Extra Tiles!`;
+                } else if (campTiles.includes(playerPos)) {
+                    totalScore += 20;
+                    statusMsg = `⛺ Base Camp! +20 Bonus Stars!`;
+                } else if (mudTiles.includes(playerPos)) {
+                    statusMsg = `🌧️ On Mudslide! Be careful next turn!`;
+                }
+            } else if (pendingMove < 0) {
+                playerPos = Math.max(1, playerPos - 1);
+                statusMsg = `🌧️ Slipped back 1 tile.`;
+            } else {
+                statusMsg = `🛡️ Held position. Try again!`;
+            }
+
+            if (playerPos === 30) {
+                totalScore += 100;
+                setTimeout(() => {
+                    alert("🏔️ CONGRATULATIONS! You reached the Low's Peak Summit of Mount Kinabalu (+100 Stars)! Starting a new expedition lap with your upgraded vocabulary mastery!");
+                    playerPos = 1;
+                    saveProgress();
+                    renderBoard();
+                }, 300);
+            }
+
+            document.getElementById('last-roll-text').innerText = statusMsg;
+            saveProgress();
+            renderBoard();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('lexitrek_v3_vocab', JSON.stringify(vocabDatabase));
+            localStorage.setItem('lexitrek_v3_pos', playerPos);
+            localStorage.setItem('lexitrek_v3_streak', streak);
+            localStorage.setItem('lexitrek_v3_score', totalScore);
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('bottom-bar').style.display = screenId === 'board-screen' ? 'flex' : 'none';
+            renderBoard();
+        }
+
+        function showProgressLog() {
+            const logList = document.getElementById('log-list');
+            logList.innerHTML = '';
+            vocabDatabase.forEach(item => {
+                let statusText = "Step 1: Recognition";
+                let bg = "#DBEAFE", col = "#1E40AF";
+                if (item.mastery === 1) { statusText = "Step 2: Active Recall"; bg = "#FEF3C7"; col = "#92400E"; }
+                if (item.mastery >= 2) { statusText = "Mastered ✅"; bg = "#D1FAE5"; col = "#065F46"; }
+
+                logList.innerHTML += `
+                    <div class="log-item">
+                        <div>
+                            <div class="log-word">${item.word}</div>
+                            <div style="font-size:11px; color:#6B7280;">${item.theme} • Errors: ${item.errors || 0}</div>
+                        </div>
+                        <span class="log-status" style="background:${bg}; color:${col};">${statusText}</span>
+                    </div>
+                `;
+            });
+            showScreen('log-screen');
+        }
+
+        function resetProgress() {
+            if (confirm("Reset climber position, scores, and word mastery back to the start?")) {
+                localStorage.clear();
+                vocabDatabase = JSON.parse(JSON.stringify(defaultVocab));
+                playerPos = 1;
+                streak = 0;
+                totalScore = 0;
+                showScreen('board-screen');
+            }
+        }
+
+        function playAudio() {
+            if ('speechSynthesis' in window && currentCard) {
+                const utterance = new SpeechSynthesisUtterance(currentCard.word);
+                utterance.lang = 'en-GB';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateNetworkStatus() {
+            const dot = document.getElementById('net-dot');
+            const txt = document.getElementById('net-text');
+            if (navigator.onLine) {
+                dot.classList.remove('offline');
+                txt.innerText = "Online";
+            } else {
+                dot.classList.add('offline');
+                txt.innerText = "Offline";
+            }
+        }
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
+
+        window.onload = () => {
+            renderBoard();
+            updateNetworkStatus();
+        };
+    </script>
+</body>
+</html>
