@@ -6,131 +6,163 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#4F46E5">
-    <title>LexiTrek - Pulse 2 Vocabulary</title>
-    
-    <!-- Link to PWA Manifest -->
+    <meta name="theme-color" content="#1E3A8A">
+    <title>LexiTrek: Borneo Summit Board Game</title>
     <link rel="manifest" href="./manifest.json">
     
     <style>
         :root {
-            --primary: #4F46E5;
-            --primary-light: #EEF2FF;
-            --bg-color: #F3F4F6;
+            --primary: #1E3A8A;
+            --accent: #3B82F6;
+            --bg-color: #F0FDF4;
             --text-dark: #1F2937;
             --text-light: #6B7280;
             --correct: #10B981;
             --incorrect: #EF4444;
+            --gold: #F59E0B;
         }
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { background-color: var(--bg-color); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 90px; }
 
-        /* Navbar */
-        .navbar { background-color: var(--primary); width: 100%; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10; }
-        .logo { font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .stats { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+        /* Top Navbar */
+        .navbar { background: linear-gradient(135deg, #1E3A8A, #3B82F6); width: 100%; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 3px 10px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 20; }
+        .logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .stats { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
         .badge { background: rgba(0,0,0,0.25); padding: 5px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #34D399; display: inline-block; }
         .status-dot.offline { background: #FBBF24; }
 
-        /* Container & Screens */
-        .app-container { width: 100%; max-width: 520px; padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
-        .screen { display: none; width: 100%; animation: fadeIn 0.25s ease-out; }
-        .screen.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        /* Main Container */
+        .app-container { width: 100%; max-width: 500px; padding: 14px; flex-grow: 1; }
+        .screen { display: none; width: 100%; }
+        .screen.active { display: block; animation: fadeIn 0.25s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Cards */
-        .card { background: white; border-radius: 18px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 16px; }
-        .home-title { color: var(--primary); font-size: 24px; margin-bottom: 6px; text-align: center; }
-        .home-sub { color: var(--text-light); font-size: 13px; margin-bottom: 18px; text-align: center; line-height: 1.5; }
+        /* Banner & Controls */
+        .expedition-banner { background: white; border-radius: 16px; padding: 14px 16px; margin-bottom: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 6px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
+        .banner-info h2 { font-size: 16px; color: var(--primary); font-weight: 800; }
+        .banner-info p { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+        .mini-btn { background: #EEF2FF; color: var(--primary); border: none; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
 
-        /* Dashboard Stats */
-        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
-        .dash-box { background: var(--primary-light); padding: 14px; border-radius: 12px; text-align: center; }
-        .dash-num { font-size: 22px; font-weight: 800; color: var(--primary); }
-        .dash-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        /* Board Game Container */
+        .board-card { background: linear-gradient(180deg, #E0F2FE 0%, #DCFCE7 45%, #FEF9C3 100%); border-radius: 20px; padding: 16px; box-shadow: 0 6px 16px rgba(0,0,0,0.08); border: 3px solid white; position: relative; }
+        .zone-header { text-align: center; font-size: 12px; font-weight: 800; color: var(--primary); background: rgba(255,255,255,0.85); padding: 6px 12px; border-radius: 20px; margin: 10px auto; width: fit-content; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* Theme Filter */
-        .filter-label { font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 6px; display: block; text-transform: uppercase; }
-        .theme-select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #E5E7EB; font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 16px; background: white; }
+        /* 5-Column Winding Board Grid */
+        .board-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 10px 0; }
+        .tile { aspect-ratio: 1; background: rgba(255,255,255,0.9); border-radius: 12px; border: 2px solid #CBD5E1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; font-weight: 800; font-size: 12px; color: #475569; box-shadow: 0 3px 0 #CBD5E1; transition: transform 0.2s; }
+        .tile.vine { background: #D1FAE5; border-color: #10B981; box-shadow: 0 3px 0 #059669; color: #065F46; }
+        .tile.mud { background: #FEE2E2; border-color: #F87171; box-shadow: 0 3px 0 #DC2626; color: #991B1B; }
+        .tile.camp { background: #FEF3C7; border-color: #F59E0B; box-shadow: 0 3px 0 #D97706; color: #92400E; }
+        .tile.summit { background: linear-gradient(135deg, #FDE047, #F59E0B); border-color: #B45309; box-shadow: 0 3px 0 #92400E; color: #78350F; }
+        .tile.active-tile { border: 3px solid var(--primary); transform: scale(1.06); z-index: 2; background: white; }
+        .tile-num { font-size: 10px; opacity: 0.7; position: absolute; top: 3px; left: 5px; }
+        .tile-icon { font-size: 16px; margin-top: 6px; }
 
-        /* Buttons */
-        .primary-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2); margin-bottom: 10px; }
-        .secondary-btn { background: white; color: var(--text-dark); border: 1px solid #D1D5DB; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 8px; }
+        /* Animated Player Climber Token */
+        .player-token { position: absolute; font-size: 24px; z-index: 5; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.3)); animation: bounce 1.2s infinite ease-in-out; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-        /* Header Controls */
-        .header-controls { display: flex; justify-content: space-between; align-items: center; color: var(--text-light); margin-bottom: 12px; font-weight: 600; font-size: 14px; }
-        .back-link { cursor: pointer; padding: 5px 10px; border-radius: 8px; background: #E5E7EB; color: var(--text-dark); font-size: 13px; }
-        .mode-badge { font-size: 11px; padding: 4px 8px; border-radius: 6px; background: #DBEAFE; color: #1E40AF; font-weight: 700; text-transform: uppercase; }
+        /* Legend */
+        .board-legend { display: flex; justify-content: space-around; font-size: 11px; font-weight: 600; color: var(--text-dark); background: rgba(255,255,255,0.8); padding: 8px; border-radius: 10px; margin-top: 10px; }
 
-        /* Media Box (Built-in Offline SVG Illustrations) */
-        .media-box { width: 100%; height: 185px; background-color: #DBEAFE; border-radius: 14px; position: relative; overflow: hidden; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; }
+        /* Sticky Bottom Dice Bar */
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 12px 20px; box-shadow: 0 -4px 12px rgba(0,0,0,0.08); display: flex; justify-content: center; z-index: 15; }
+        .bottom-inner { width: 100%; max-width: 480px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .roll-btn { background: linear-gradient(135deg, #1E3A8A, #2563EB); color: white; border: none; padding: 14px 20px; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; flex-grow: 1; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); transition: transform 0.1s; }
+        .roll-btn:active { transform: scale(0.97); }
+        .dice-Status { font-size: 12px; font-weight: 700; color: var(--text-light); min-width: 110px; text-align: center; background: #F3F4F6; padding: 10px; border-radius: 12px; }
+
+        /* Question Modal Overlay */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.75); z-index: 50; display: none; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
+        .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out; }
+        .modal-card { background: white; width: 100%; max-width: 460px; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); max-height: 92vh; overflow-y: auto; }
+
+        .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .mode-badge { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: #DBEAFE; color: #1E40AF; font-weight: 800; text-transform: uppercase; }
+        .stake-badge { font-size: 11px; font-weight: 700; color: #059669; background: #D1FAE5; padding: 4px 8px; border-radius: 8px; }
+
+        /* Media Box */
+        .media-box { width: 100%; height: 165px; background-color: #DBEAFE; border-radius: 14px; position: relative; overflow: hidden; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; }
         .svg-illustration { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        .audio-btn { position: absolute; bottom: 12px; right: 12px; background: white; border: none; border-radius: 50%; width: 44px; height: 44px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        .audio-btn { position: absolute; bottom: 10px; right: 10px; background: white; border: none; border-radius: 50%; width: 42px; height: 42px; box-shadow: 0 3px 8px rgba(0,0,0,0.18); cursor: pointer; font-size: 19px; display: flex; align-items: center; justify-content: center; }
 
-        /* Question Text */
-        .theme-label { color: var(--primary); font-size: 11px; font-weight: 800; text-transform: uppercase; text-align: center; letter-spacing: 0.8px; margin-bottom: 6px; }
-        .definition { text-align: center; font-size: 17px; font-weight: 700; margin-bottom: 12px; line-height: 1.35; }
-        .sentence-box { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 12px; text-align: center; font-style: italic; color: var(--text-dark); margin-bottom: 18px; font-size: 15px; }
+        .theme-label { color: var(--accent); font-size: 11px; font-weight: 800; text-transform: uppercase; text-align: center; letter-spacing: 0.8px; margin-bottom: 4px; }
+        .definition { text-align: center; font-size: 16px; font-weight: 700; margin-bottom: 10px; line-height: 1.35; }
+        .sentence-box { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 10px; text-align: center; font-style: italic; color: var(--text-dark); margin-bottom: 14px; font-size: 14px; }
 
-        /* Options & Recall */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .option-btn { background: white; border: 2px solid #E5E7EB; border-radius: 10px; padding: 14px 10px; font-size: 15px; font-weight: 600; color: var(--text-dark); cursor: pointer; text-transform: capitalize; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .option-btn { background: white; border: 2px solid #E5E7EB; border-radius: 10px; padding: 12px 8px; font-size: 14px; font-weight: 700; color: var(--text-dark); cursor: pointer; text-transform: capitalize; }
         .option-btn.correct { border-color: var(--correct); background: #D1FAE5; color: #065F46; }
         .option-btn.incorrect { border-color: var(--incorrect); background: #FEE2E2; color: #991B1B; }
 
         .recall-mode { display: none; text-align: center; }
-        .typing-input { width: 100%; padding: 14px; border: 2px solid #D1D5DB; border-radius: 10px; font-size: 17px; text-align: center; margin-bottom: 12px; font-weight: 700; outline: none; }
+        .typing-input { width: 100%; padding: 12px; border: 2px solid #D1D5DB; border-radius: 10px; font-size: 16px; text-align: center; margin-bottom: 10px; font-weight: 700; outline: none; }
         .typing-input:focus { border-color: var(--primary); }
+        .primary-btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; }
 
-        /* Feedback */
-        #feedback-area { margin-top: 16px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 600; display: none; font-size: 14px; line-height: 1.4; }
-        .next-btn { margin-top: 12px; background: var(--text-dark); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; }
+        #feedback-area { margin-top: 14px; padding: 12px; border-radius: 10px; text-align: center; font-weight: 600; display: none; font-size: 13px; line-height: 1.4; }
+        .next-btn { margin-top: 10px; background: var(--text-dark); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
 
-        /* Error Log List */
+        /* Log Screen */
+        .card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 16px; }
         .log-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #E5E7EB; font-size: 14px; }
         .log-word { font-weight: 700; color: var(--primary); text-transform: capitalize; }
-        .log-status { font-size: 12px; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+        .log-status { font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 700; }
     </style>
 </head>
 <body>
 
+    <!-- Top Navbar -->
     <div class="navbar">
-        <div class="logo" onclick="showScreen('home-screen')">⛰️ LexiTrek</div>
+        <div class="logo" onclick="showScreen('board-screen')">⛰️ LexiTrek: Borneo Summit</div>
         <div class="stats">
-            <div class="badge" title="Connection Status">
-                <span class="status-dot" id="net-dot"></span>
-                <span id="net-text">Online</span>
-            </div>
+            <div class="badge"><span class="status-dot" id="net-dot"></span><span id="net-text">Online</span></div>
             <div class="badge">🔥 <span id="streak-count">0</span></div>
             <div class="badge">⭐ <span id="score-count">0</span></div>
         </div>
     </div>
 
     <div class="app-container">
-        
-        <!-- HOME SCREEN -->
-        <div id="home-screen" class="screen active">
-            <div class="card">
-                <h1 class="home-title">LexiTrek Pulse 2</h1>
-                <p class="home-sub">Form 1 CEFR A2-Mid Gamified Vocabulary App</p>
+
+        <!-- BOARD GAME SCREEN -->
+        <div id="board-screen" class="screen active">
+            <div class="expedition-banner">
+                <div class="banner-info">
+                    <h2 id="zone-title">Zone 1: Tamu Foothills</h2>
+                    <p>Tile <span id="pos-display">1</span> / 30 • Mastered: <span id="mastered-display">0/15</span></p>
+                </div>
+                <button class="mini-btn" onclick="showProgressLog()">📊 Log & Settings</button>
+            </div>
+
+            <div class="board-card">
+                <div class="zone-header">🏔️ MOUNT KINABALU SUMMIT (4,095m)</div>
                 
-                <div class="dash-grid">
-                    <div class="dash-box">
-                        <div class="dash-num" id="mastered-count">0 / 15</div>
-                        <div class="dash-label">Mastered (Recall)</div>
-                    </div>
-                    <div class="dash-box">
-                        <div class="dash-num" id="review-count">15</div>
-                        <div class="dash-label">In Learning Queue</div>
-                    </div>
+                <!-- 30-Tile Winding Board Grid injected via JS -->
+                <div class="board-grid" id="board-grid"></div>
+
+                <div class="zone-header">⛺ TIMPOHON GATE (START)</div>
+
+                <div class="board-legend">
+                    <span>🌿 Vine (+2 Boost)</span>
+                    <span>⛺ Base Camp (+20⭐)</span>
+                    <span>🌧️ Mudslide (Caution)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRESS LOG & SETTINGS SCREEN -->
+        <div id="log-screen" class="screen">
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <h3 style="color: var(--primary);">📊 Pulse 2 Mastery & Error Log</h3>
+                    <button class="mini-btn" onclick="showScreen('board-screen')">← Back to Board</button>
                 </div>
 
-                <!-- Self-Determination Theory: Learner Autonomy via Module Selection -->
-                <label class="filter-label" for="module-select">Select Pulse 2 Thematic Module:</label>
-                <select id="module-select" class="theme-select">
-                    <option value="ALL">All Modules (Adaptive Mix)</option>
+                <label style="font-size:12px; font-weight:700; color:var(--text-light); display:block; margin-bottom:6px;">FILTER BY PULSE 2 MODULE:</label>
+                <select id="module-select" style="width:100%; padding:10px; border-radius:10px; border:2px solid #E5E7EB; font-weight:600; margin-bottom:16px;" onchange="saveProgress()">
+                    <option value="ALL">All Modules (Adaptive Spaced Mix)</option>
                     <option value="PERSONAL IDENTITY">Personal Identity & Routine</option>
                     <option value="SCHOOL & EDUCATION">School & Education</option>
                     <option value="FREE TIME & HOBBIES">Free Time & Hobbies</option>
@@ -138,73 +170,60 @@
                     <option value="HEALTH, FOOD & SHOPPING">Health, Food & Shopping</option>
                 </select>
 
-                <button class="primary-btn" onclick="startSession()">Start Spaced Practice</button>
-                <button class="secondary-btn" onclick="showProgressLog()">📊 View Vocabulary Progress Log</button>
-                <button class="secondary-btn" style="color: #EF4444; border-color: #FECACA;" onclick="resetProgress()">Reset Student Data</button>
-            </div>
-        </div>
-
-        <!-- LEARN SCREEN -->
-        <div id="learn-screen" class="screen">
-            <div class="header-controls">
-                <span class="back-link" onclick="showScreen('home-screen')">← Exit</span>
-                <span class="mode-badge" id="mode-indicator">Recognition Mode</span>
-                <span id="question-counter">1 / 10</span>
-            </div>
-
-            <div class="card">
-                <div class="media-box">
-                    <div id="svg-container" class="svg-illustration"></div>
-                    <button class="audio-btn" onclick="playAudio()" title="Listen to pronunciation">🔊</button>
-                </div>
-
-                <div class="theme-label" id="theme-text">THEME</div>
-                <div class="definition" id="definition-text">Definition</div>
-                <div class="sentence-box" id="sentence-text">"Sentence"</div>
-
-                <!-- Multiple Choice (Recognition) -->
-                <div class="options-grid" id="recognition-mode"></div>
-
-                <!-- Typing (Active Recall) -->
-                <div class="recall-mode" id="recall-mode">
-                    <input type="text" id="typing-input" class="typing-input" placeholder="Type the missing word..." autocomplete="off">
-                    <button class="primary-btn" onclick="checkTypedAnswer()">Verify Answer</button>
-                </div>
-
-                <!-- Immediate Corrective Feedback -->
-                <div id="feedback-area">
-                    <p id="feedback-message"></p>
-                    <button class="next-btn" onclick="nextCard()">Continue →</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- PROGRESS LOG SCREEN (Self-Regulated Learning) -->
-        <div id="log-screen" class="screen">
-            <div class="header-controls">
-                <span class="back-link" onclick="showScreen('home-screen')">← Back to Home</span>
-                <span>Self-Regulated Learning Log</span>
-            </div>
-            <div class="card">
-                <h3 style="margin-bottom: 12px; color: var(--primary);">Lexical Mastery & Error Log</h3>
                 <div id="log-list"></div>
-            </div>
-        </div>
 
-        <!-- SUMMARY SCREEN -->
-        <div id="summary-screen" class="screen">
-            <div class="card" style="text-align: center;">
-                <h2 class="home-title">Session Complete! 🎉</h2>
-                <p class="home-sub" style="margin-top:8px;">Words answered accurately in Recognition Mode have now unlocked Active Recall Mode for deeper memory consolidation.</p>
-                <div style="font-size: 42px; font-weight: 800; color: var(--correct); margin: 20px 0;" id="final-score">+0 pts</div>
-                <button class="primary-btn" onclick="showScreen('home-screen')">Return to Dashboard</button>
+                <button onclick="resetProgress()" style="margin-top:16px; width:100%; padding:12px; border-radius:10px; border:1px solid #FCA5A5; background:#FEF2F2; color:#DC2626; font-weight:700; cursor:pointer;">Reset Board & Student Progress</button>
             </div>
         </div>
 
     </div>
 
+    <!-- Sticky Bottom Dice Bar -->
+    <div class="bottom-bar" id="bottom-bar">
+        <div class="bottom-inner">
+            <div class="dice-Status" id="last-roll-text">Ready to Trek!</div>
+            <button class="roll-btn" onclick="triggerDiceChallenge()">
+                <span>🎲 Answer to Roll Dice</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- VOCABULARY CHALLENGE MODAL -->
+    <div class="modal-overlay" id="challenge-modal">
+        <div class="modal-card">
+            <div class="modal-top">
+                <span class="mode-badge" id="mode-indicator">Step 1: Recognition</span>
+                <span class="stake-badge" id="stake-indicator">🎲 Roll 1–2 Tiles</span>
+            </div>
+
+            <div class="media-box">
+                <div id="svg-container" class="svg-illustration"></div>
+                <button class="audio-btn" onclick="playAudio()" title="Listen to pronunciation">🔊</button>
+            </div>
+
+            <div class="theme-label" id="theme-text">THEME</div>
+            <div class="definition" id="definition-text">Definition</div>
+            <div class="sentence-box" id="sentence-text">"Sentence"</div>
+
+            <!-- Multiple Choice (Recognition) -->
+            <div class="options-grid" id="recognition-mode"></div>
+
+            <!-- Typing (Active Recall) -->
+            <div class="recall-mode" id="recall-mode">
+                <input type="text" id="typing-input" class="typing-input" placeholder="Type the missing word..." autocomplete="off">
+                <button class="primary-btn" onclick="checkTypedAnswer()">Verify & Roll Dice 🎲</button>
+            </div>
+
+            <!-- Immediate Corrective Feedback -->
+            <div id="feedback-area">
+                <p id="feedback-message"></p>
+                <button class="next-btn" id="continue-btn" onclick="closeModalAndMove()">Move Climber on Board →</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Built-in Offline Vector Graphics for all 15 Pulse 2 Target Words
+        // Offline Vector Graphics for all 15 Pulse 2 Words
         const offlineArt = {
             classroom: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#DBEAFE"/><rect x="80" y="30" width="240" height="110" rx="6" fill="#065F46" stroke="#D97706" stroke-width="8"/><text x="200" y="75" font-size="22" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">CLASSROOM</text><line x1="120" y1="100" x2="280" y2="100" stroke="#A7F3D0" stroke-width="4"/><rect x="60" y="155" width="90" height="45" fill="#B45309" rx="4"/><rect x="250" y="155" width="90" height="45" fill="#B45309" rx="4"/></svg>`,
             subject: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#E0E7FF"/><rect x="110" y="40" width="80" height="110" rx="6" fill="#EF4444"/><rect x="130" y="55" width="50" height="15" fill="white"/><rect x="210" y="45" width="80" height="110" rx="6" fill="#3B82F6" transform="rotate(8 210 45)"/><circle cx="250" cy="100" r="22" fill="#FBBF24"/></svg>`,
@@ -241,241 +260,44 @@
             { word: "ingredient", theme: "HEALTH, FOOD & SHOPPING", def: "One of the foods used to make a dish or recipe.", sentence: "\"Fresh chili is the main _______ in this dish.\"", options: ["ingredient", "receipt", "tournament", "schedule"], mastery: 0, errors: 0 }
         ];
 
-        let vocabDatabase = JSON.parse(localStorage.getItem('lexitrek_v2_vocab')) || defaultVocab;
-        let streak = parseInt(localStorage.getItem('lexitrek_v2_streak')) || 0;
-        let totalScore = parseInt(localStorage.getItem('lexitrek_v2_score')) || 0;
+        // Special Board Tiles
+        const vineTiles = [4, 11, 19, 25]; // Shortcut Vines (+2 spaces)
+        const mudTiles = [8, 16, 23, 28];  // Mudslide Hazard
+        const campTiles = [6, 12, 18, 24]; // Base Camps (+20 Bonus Stars)
 
-        let sessionQueue = [];
-        let currentIndex = 0;
-        let sessionScore = 0;
+        let vocabDatabase = JSON.parse(localStorage.getItem('lexitrek_v3_vocab')) || defaultVocab;
+        let playerPos = parseInt(localStorage.getItem('lexitrek_v3_pos')) || 1;
+        let streak = parseInt(localStorage.getItem('lexitrek_v3_streak')) || 0;
+        let totalScore = parseInt(localStorage.getItem('lexitrek_v3_score')) || 0;
+
+        let currentCard = null;
+        let pendingMove = 0;
         let answered = false;
 
-        function updateDashboard() {
-            document.getElementById('streak-count').innerText = streak;
-            document.getElementById('score-count').innerText = totalScore;
-            const mastered = vocabDatabase.filter(item => item.mastery >= 2).length;
-            const due = vocabDatabase.filter(item => item.mastery < 2).length;
-            document.getElementById('mastered-count').innerText = `${mastered} / ${vocabDatabase.length}`;
-            document.getElementById('review-count').innerText = due === 0 ? "All Mastered!" : due;
-        }
+        // Render the 30-Tile Winding Board (Bottom-to-Top Boustrophedon Snake Layout)
+        function renderBoard() {
+            const grid = document.getElementById('board-grid');
+            grid.innerHTML = '';
 
-        function saveProgress() {
-            localStorage.setItem('lexitrek_v2_vocab', JSON.stringify(vocabDatabase));
-            localStorage.setItem('lexitrek_v2_streak', streak);
-            localStorage.setItem('lexitrek_v2_score', totalScore);
-            updateDashboard();
-        }
+            // 6 rows from top (Row 5: tiles 26-30) down to bottom (Row 0: tiles 1-5)
+            for (let row = 5; row >= 0; row--) {
+                let rowTiles = [];
+                for (let col = 0; col < 5; col++) {
+                    rowTiles.push(row * 5 + col + 1);
+                }
+                // Reverse odd rows so the trail winds back and forth like Snakes & Ladders
+                if (row % 2 === 1) rowTiles.reverse();
 
-        function resetProgress() {
-            if (confirm("Reset all word mastery and scores back to zero?")) {
-                localStorage.clear();
-                vocabDatabase = JSON.parse(JSON.stringify(defaultVocab));
-                streak = 0;
-                totalScore = 0;
-                updateDashboard();
-            }
-        }
+                rowTiles.forEach(tileNum => {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    let icon = '🐾';
 
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            updateDashboard();
-        }
+                    if (tileNum === 1) { icon = '🚩'; }
+                    else if (tileNum === 30) { tile.classList.add('summit'); icon = '🏔️'; }
+                    else if (vineTiles.includes(tileNum)) { tile.classList.add('vine'); icon = '🌿'; }
+                    else if (mudTiles.includes(tileNum)) { tile.classList.add('mud'); icon = '🌧️'; }
+                    else if (campTiles.includes(tileNum)) { tile.classList.add('camp'); icon = '⛺'; }
 
-        function showProgressLog() {
-            const logList = document.getElementById('log-list');
-            logList.innerHTML = '';
-            vocabDatabase.forEach(item => {
-                let statusText = "Recognition (Blocked)";
-                let bg = "#DBEAFE", col = "#1E40AF";
-                if (item.mastery === 1) { statusText = "Active Recall"; bg = "#FEF3C7"; col = "#92400E"; }
-                if (item.mastery >= 2) { statusText = "Mastered ✅"; bg = "#D1FAE5"; col = "#065F46"; }
-
-                logList.innerHTML += `
-                    <div class="log-item">
-                        <div>
-                            <div class="log-word">${item.word}</div>
-                            <div style="font-size:11px; color:#6B7280;">${item.theme} • Errors: ${item.errors || 0}</div>
-                        </div>
-                        <span class="log-status" style="background:${bg}; color:${col};">${statusText}</span>
-                    </div>
-                `;
-            });
-            showScreen('log-screen');
-        }
-
-        function startSession() {
-            const selectedModule = document.getElementById('module-select').value;
-            let pool = selectedModule === "ALL" ? [...vocabDatabase] : vocabDatabase.filter(item => item.theme === selectedModule);
-            
-            // Spaced Repetition Priority: Prioritize lower mastery & higher error words first
-            sessionQueue = pool.sort((a, b) => a.mastery - b.mastery || (b.errors || 0) - (a.errors || 0) || 0.5 - Math.random());
-            currentIndex = 0;
-            sessionScore = 0;
-            showScreen('learn-screen');
-            loadCard();
-        }
-
-        function loadCard() {
-            answered = false;
-            const data = sessionQueue[currentIndex];
-            
-            document.getElementById('theme-text').innerText = data.theme;
-            document.getElementById('definition-text').innerText = data.def;
-            document.getElementById('sentence-text').innerText = data.sentence;
-            document.getElementById('svg-container').innerHTML = offlineArt[data.word] || offlineArt['classroom'];
-            document.getElementById('question-counter').innerText = `${currentIndex + 1} / ${sessionQueue.length}`;
-            document.getElementById('feedback-area').style.display = 'none';
-
-            const recogMode = document.getElementById('recognition-mode');
-            const recallMode = document.getElementById('recall-mode');
-            const typingInput = document.getElementById('typing-input');
-            const modeBadge = document.getElementById('mode-indicator');
-
-            if (data.mastery === 0) {
-                modeBadge.innerText = "Step 1: Recognition";
-                modeBadge.style.background = "#DBEAFE";
-                modeBadge.style.color = "#1E40AF";
-                recogMode.style.display = 'grid';
-                recallMode.style.display = 'none';
-                recogMode.innerHTML = '';
-                
-                let opts = [...data.options].sort(() => 0.5 - Math.random());
-                opts.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.innerText = opt;
-                    btn.onclick = () => checkMCQ(opt, btn, data.word);
-                    recogMode.appendChild(btn);
-                });
-            } else {
-                modeBadge.innerText = "Step 2: Active Recall";
-                modeBadge.style.background = "#FEF3C7";
-                modeBadge.style.color = "#92400E";
-                recogMode.style.display = 'none';
-                recallMode.style.display = 'block';
-                typingInput.value = '';
-                typingInput.disabled = false;
-                typingInput.style.borderColor = "#D1D5DB";
-                typingInput.style.backgroundColor = "white";
-            }
-        }
-
-        function checkMCQ(selectedWord, btnElement, correctWord) {
-            if (answered) return;
-            answered = true;
-            
-            const buttons = document.querySelectorAll('.option-btn');
-            buttons.forEach(b => b.style.pointerEvents = 'none');
-
-            const isCorrect = selectedWord.toLowerCase() === correctWord.toLowerCase();
-            if (isCorrect) {
-                btnElement.classList.add('correct');
-                sessionQueue[currentIndex].mastery = 1; // Graduate to Active Recall
-            } else {
-                btnElement.classList.add('incorrect');
-                buttons.forEach(b => { if (b.innerText.toLowerCase() === correctWord.toLowerCase()) b.classList.add('correct'); });
-                sessionQueue[currentIndex].mastery = 0;
-                sessionQueue[currentIndex].errors = (sessionQueue[currentIndex].errors || 0) + 1;
-            }
-            showFeedback(isCorrect, correctWord);
-        }
-
-        function checkTypedAnswer() {
-            if (answered) return;
-            const inputEl = document.getElementById('typing-input');
-            if (!inputEl.value.trim()) return;
-            answered = true;
-            inputEl.disabled = true;
-
-            const typedWord = inputEl.value.trim().toLowerCase();
-            const correctWord = sessionQueue[currentIndex].word.toLowerCase();
-            
-            const isCorrect = typedWord === correctWord;
-            if (isCorrect) {
-                inputEl.style.borderColor = "var(--correct)";
-                inputEl.style.backgroundColor = "#D1FAE5";
-                sessionQueue[currentIndex].mastery = 2; // Fully Mastered
-            } else {
-                inputEl.style.borderColor = "var(--incorrect)";
-                inputEl.style.backgroundColor = "#FEE2E2";
-                sessionQueue[currentIndex].mastery = 0; // Revert to Blocked Recognition
-                sessionQueue[currentIndex].errors = (sessionQueue[currentIndex].errors || 0) + 1;
-            }
-            showFeedback(isCorrect, correctWord);
-        }
-
-        function showFeedback(isCorrect, correctWord) {
-            const feedbackArea = document.getElementById('feedback-area');
-            const feedbackMessage = document.getElementById('feedback-message');
-
-            if (isCorrect) {
-                feedbackArea.style.backgroundColor = '#D1FAE5';
-                feedbackArea.style.color = '#065F46';
-                feedbackMessage.innerText = `✅ Correct! "${correctWord.toUpperCase()}" fits the context.`;
-                streak++;
-                totalScore += 10;
-                sessionScore += 10;
-            } else {
-                feedbackArea.style.backgroundColor = '#FEE2E2';
-                feedbackArea.style.color = '#991B1B';
-                feedbackMessage.innerText = `❌ Corrective Feedback: The target word is "${correctWord.toUpperCase()}". Re-scheduled for spaced review.`;
-                streak = 0;
-            }
-
-            saveProgress();
-            feedbackArea.style.display = 'block';
-        }
-
-        function nextCard() {
-            if (currentIndex < sessionQueue.length - 1) {
-                currentIndex++;
-                loadCard();
-            } else {
-                document.getElementById('final-score').innerText = `+${sessionScore} pts`;
-                showScreen('summary-screen');
-            }
-        }
-
-        function playAudio() {
-            if ('speechSynthesis' in window) {
-                const word = sessionQueue[currentIndex].word;
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'en-GB';
-                window.speechSynthesis.speak(utterance);
-            } else {
-                alert("Audio is not supported on this device.");
-            }
-        }
-
-        // Network Status Monitor
-        function updateNetworkStatus() {
-            const dot = document.getElementById('net-dot');
-            const txt = document.getElementById('net-text');
-            if (navigator.onLine) {
-                dot.classList.remove('offline');
-                txt.innerText = "Online";
-            } else {
-                dot.classList.add('offline');
-                txt.innerText = "Offline Mode";
-            }
-        }
-        window.addEventListener('online', updateNetworkStatus);
-        window.addEventListener('offline', updateNetworkStatus);
-
-        // Register Service Worker for 100% Offline Support on GitHub Pages
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(() => console.log('LexiTrek Offline Service Worker Registered!'))
-                    .catch(err => console.log('Service Worker Error:', err));
-            });
-        }
-
-        window.onload = () => {
-            updateDashboard();
-            updateNetworkStatus();
-        };
-    </script>
-</body>
-</html>
+                    if (tileNum === playerPos) {
+                        tile.classList.add('active
