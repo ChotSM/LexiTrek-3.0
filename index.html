@@ -82,8 +82,22 @@
         .bottom-inner { width: 100%; max-width: 480px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         ..roll-btn { background: linear-gradient(135deg, #22C55E, #15803D); color: white; border: none; padding: 13px 16px; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; flex-grow: 1; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.45); transition: transform 0.1s; }
 .roll-btn:active { transform: scale(0.97); }
-        .dice-status { font-size: 11px; font-weight: 700; color: var(--text-dark); width: 130px; text-align: center; background: #F3F4F6; padding: 8px; border-radius: 10px; line-height: 1.25; }
-
+        ..dice-status { 
+    font-size: 12px; 
+    font-weight: 800; 
+    color: #000000; /* Black font color */
+    width: 130px; 
+    text-align: center; 
+    /* Vibrant Azure Blue Gradient */
+    background: linear-gradient(120deg, #E0FFFF, #00BFFF, #00E5FF, #E0FFFF); 
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite; /* Color-shifting animation */
+    padding: 10px; 
+    border-radius: 12px; 
+    line-height: 1.25; 
+    box-shadow: 0 4px 10px rgba(0, 191, 255, 0.4); /* Glowing azure shadow */
+    border: 2px solid #00BFFF;
+}
         /* Modal Overlay (Vibrant Indigo) */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
