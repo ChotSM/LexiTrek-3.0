@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1E3A8A">
-    <title>LexiTrek 3.6: Borneo Summit</title>
+    <title>LexiTrek 3.5: Borneo Summit</title>
     <link rel="manifest" href="./manifest.json">
     
     <style>
@@ -23,7 +23,7 @@
         }
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 95px; overflow-x: hidden; }
+        body { background-color: var(--bg-color); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-bottom: 95px; }
 
         /* Top Navbar */
         .navbar { background: linear-gradient(135deg, #1E3A8A, #2563EB); width: 100%; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 3px 10px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 20; }
@@ -134,143 +134,13 @@
         .avatar-picker { display: flex; justify-content: center; gap: 10px; margin: 12px 0; }
         .avatar-opt { font-size: 26px; padding: 8px; border-radius: 12px; border: 2px solid #E5E7EB; cursor: pointer; background: #F9FAFB; }
         .avatar-opt.selected { border-color: var(--primary); background: #DBEAFE; transform: scale(1.1); }
-
-        /* ====================================================
-           NEW FULL-SCREEN FIREWORKS & EXPLOSION VICTORY OVERLAY
-           ==================================================== */
-        .celebration-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at center, rgba(15, 23, 42, 0.88) 0%, rgba(2, 6, 23, 0.97) 100%);
-            z-index: 100;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 20px;
-            text-align: center;
-        }
-        .celebration-overlay.open {
-            display: flex;
-        }
-        #fireworks-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 101;
-        }
-        .celebration-content {
-            position: relative;
-            z-index: 102;
-            max-width: 440px;
-            width: 100%;
-            padding: 28px 20px;
-            border-radius: 28px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
-            border: 2px solid rgba(253, 224, 71, 0.5);
-            box-shadow: 0 0 60px rgba(245, 158, 11, 0.5), inset 0 0 30px rgba(253, 224, 71, 0.25);
-            animation: cardShockwave 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes cardShockwave {
-            0% { transform: scale(0.1); opacity: 0; filter: brightness(3); }
-            60% { transform: scale(1.08); opacity: 1; filter: brightness(1.3); }
-            80% { transform: scale(0.96); }
-            100% { transform: scale(1); opacity: 1; filter: brightness(1); }
-        }
-        .medal-explosion {
-            font-size: 76px;
-            line-height: 1;
-            margin-bottom: 8px;
-            display: inline-block;
-            filter: drop-shadow(0 0 25px #F59E0B);
-            animation: spinBurst 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, floatPulse 2s infinite ease-in-out 1s;
-        }
-        @keyframes spinBurst {
-            0% { transform: scale(0) rotate(-180deg); }
-            70% { transform: scale(1.35) rotate(15deg); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
-        @keyframes floatPulse {
-            0%, 100% { transform: scale(1) translateY(0); }
-            50% { transform: scale(1.12) translateY(-8px); }
-        }
-        .boom-title {
-            font-size: 36px;
-            font-weight: 900;
-            text-transform: uppercase;
-            line-height: 1.08;
-            letter-spacing: 1px;
-            background: linear-gradient(180deg, #FFFFFF 0%, #FDE047 45%, #F59E0B 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 4px 15px rgba(245, 158, 11, 0.8));
-            margin-bottom: 12px;
-            animation: textBoom 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes textBoom {
-            0% { transform: scale(0.2); letter-spacing: -10px; opacity: 0; }
-            65% { transform: scale(1.18); letter-spacing: 3px; opacity: 1; }
-            100% { transform: scale(1); letter-spacing: 1px; opacity: 1; }
-        }
-        .boom-climber {
-            font-size: 22px;
-            font-weight: 800;
-            color: #38BDF8;
-            text-shadow: 0 2px 10px rgba(56, 189, 248, 0.7);
-            margin-bottom: 10px;
-        }
-        .boom-stars {
-            display: inline-block;
-            font-size: 26px;
-            font-weight: 900;
-            color: #FEF08A;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.35), rgba(217, 119, 6, 0.55));
-            border: 2px solid #FDE047;
-            padding: 8px 22px;
-            border-radius: 999px;
-            margin: 10px 0 14px;
-            box-shadow: 0 0 25px rgba(253, 224, 71, 0.6);
-            animation: starPulse 1.1s infinite alternate;
-        }
-        @keyframes starPulse {
-            from { transform: scale(0.96); box-shadow: 0 0 15px rgba(253, 224, 71, 0.4); }
-            to { transform: scale(1.06); box-shadow: 0 0 35px rgba(253, 224, 71, 0.95); }
-        }
-        .boom-desc {
-            color: #E2E8F0;
-            font-size: 15px;
-            font-weight: 600;
-            line-height: 1.45;
-            margin-bottom: 22px;
-        }
-        .boom-btn {
-            background: linear-gradient(135deg, #FDE047 0%, #F59E0B 55%, #D97706 100%);
-            color: #1E1B4B;
-            border: none;
-            padding: 16px 24px;
-            border-radius: 16px;
-            font-size: 18px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 6px 25px rgba(245, 158, 11, 0.75);
-            transition: transform 0.15s;
-        }
-        .boom-btn:active {
-            transform: scale(0.95);
-        }
     </style>
 </head>
 <body>
 
     <!-- Top Navbar -->
     <div class="navbar">
-        <div class="logo" onclick="showScreen('board-screen')">⛰️ LexiTrek 3.6</div>
+        <div class="logo" onclick="showScreen('board-screen')">⛰️ LexiTrek 3.5</div>
         <div class="stats">
             <div class="badge"><span class="status-dot" id="net-dot"></span><span id="net-text">Online</span></div>
             <div class="badge" onclick="openProfileModal()" style="cursor:pointer;" title="Edit Student Profile"><span id="nav-avatar">🧗</span> <span id="nav-name">Student</span></div>
@@ -381,8 +251,7 @@
 
                 <div style="display:flex; gap:8px; margin-top:16px;">
                     <button onclick="openProfileModal()" style="flex:1; padding:11px; border-radius:10px; border:1px solid #CBD5E1; background:#F8FAFC; font-weight:700; font-size:12px; cursor:pointer;">👤 Change Student ID</button>
-                    <button onclick="triggerSummitCelebration()" style="flex:1; padding:11px; border-radius:10px; border:1px solid #FDE047; background:#FEF9C3; color:#92400E; font-weight:700; font-size:12px; cursor:pointer;">🎆 Test Fireworks</button>
-                    <button onclick="resetProgress()" style="flex:1; padding:11px; border-radius:10px; border:1px solid #FCA5A5; background:#FEF2F2; color:#DC2626; font-weight:700; font-size:12px; cursor:pointer;">🗑️ Reset Data</button>
+                    <button onclick="resetProgress()" style="flex:1; padding:11px; border-radius:10px; border:1px solid #FCA5A5; background:#FEF2F2; color:#DC2626; font-weight:700; font-size:12px; cursor:pointer;">🗑️ Reset All Data</button>
                 </div>
             </div>
         </div>
@@ -440,7 +309,7 @@
         <div class="modal-card" style="text-align:center;">
             <h3 style="color:var(--primary); margin-bottom:6px;">⛺ Climber Registration</h3>
             <p style="font-size:12px; color:var(--text-light); margin-bottom:12px;">Enter your Student Name or Class ID and choose your Borneo Climber Avatar:</p>
-            <input type="text" id="student-name-input" class="typing-input" placeholder="e.g., Atif_1A" style="margin-bottom:10px;">
+            <input type="text" id="student-name-input" class="typing-input" placeholder="e.g., Aiman_1Kreatif" style="margin-bottom:10px;">
             <div class="avatar-picker" id="avatar-picker">
                 <span class="avatar-opt selected" onclick="selectAvatar('🧗', this)">🧗</span>
                 <span class="avatar-opt" onclick="selectAvatar('🐯', this)">🐯</span>
@@ -452,29 +321,10 @@
         </div>
     </div>
 
-    <!-- ==========================================================
-         FULL-SCREEN FIREWORKS & EXPLOSION CELEBRATION OVERLAY
-         ========================================================== -->
-    <div class="celebration-overlay" id="summit-celebration">
-        <canvas id="fireworks-canvas"></canvas>
-        <div class="celebration-content">
-            <div class="medal-explosion">🏔️🏅</div>
-            <div class="boom-title">SUMMIT<br>CONQUERED!</div>
-            <div class="boom-climber" id="celebration-student-name">Congratulations, Climber!</div>
-            <div class="boom-stars">💥 +100 BONUS ⭐ 💥</div>
-            <p class="boom-desc" id="celebration-desc">
-                You reached Low's Peak (4,095m) on Mount Kinabalu and unlocked the Golden Summit Medal!
-            </p>
-            <button class="boom-btn" onclick="closeSummitCelebration()">
-                🚀 Start Next Expedition Lap!
-            </button>
-        </div>
-    </div>
-
     <script>
         // Built-in Offline Web Audio Synthesizer (Zero External Audio Files Needed!)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTone(freq, type, duration, delay = 0, vol = 0.12) {
+        function playTone(freq, type, duration, delay = 0) {
             try {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 setTimeout(() => {
@@ -482,5 +332,561 @@
                     const gain = audioCtx.createGain();
                     osc.type = type;
                     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audio
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + duration);
+                }, delay);
+            } catch (e) {}
+        }
+        function sfxCorrect() { playTone(523.25, 'sine', 0.12, 0); playTone(659.25, 'sine', 0.12, 100); playTone(783.99, 'sine', 0.25, 200); }
+        function sfxWrong() { playTone(220, 'sawtooth', 0.18, 0); playTone(180, 'sawtooth', 0.25, 150); }
+        function sfxHop() { playTone(440, 'triangle', 0.08, 0); }
+
+        // Offline Vector Graphics for all 15 Pulse 2 Words
+        const offlineArt = {
+            classroom: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#DBEAFE"/><rect x="80" y="30" width="240" height="110" rx="6" fill="#065F46" stroke="#D97706" stroke-width="8"/><text x="200" y="75" font-size="22" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">CLASSROOM</text><line x1="120" y1="100" x2="280" y2="100" stroke="#A7F3D0" stroke-width="4"/><rect x="60" y="155" width="90" height="45" fill="#B45309" rx="4"/><rect x="250" y="155" width="90" height="45" fill="#B45309" rx="4"/></svg>`,
+            subject: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#E0E7FF"/><rect x="110" y="40" width="80" height="110" rx="6" fill="#EF4444"/><rect x="130" y="55" width="50" height="15" fill="white"/><rect x="210" y="45" width="80" height="110" rx="6" fill="#3B82F6" transform="rotate(8 210 45)"/><circle cx="250" cy="100" r="22" fill="#FBBF24"/></svg>`,
+            experiment: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#EDE9FE"/><polygon points="160,155 185,75 215,75 240,155" fill="#34D399" stroke="#4F46E5" stroke-width="6"/><rect x="178" y="45" width="44" height="30" fill="none" stroke="#4F46E5" stroke-width="6"/><circle cx="195" cy="125" r="8" fill="white"/><circle cx="210" cy="105" r="6" fill="white"/><circle cx="200" cy="30" r="10" fill="#A78BFA"/></svg>`,
+            routine: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FEF3C7"/><circle cx="200" cy="100" r="65" fill="white" stroke="#F59E0B" stroke-width="8"/><line x1="200" y1="100" x2="200" y2="55" stroke="#1F2937" stroke-width="6" stroke-linecap="round"/><line x1="200" y1="100" x2="235" y2="100" stroke="#EF4444" stroke-width="6" stroke-linecap="round"/><circle cx="200" cy="100" r="6" fill="#1F2937"/></svg>`,
+            sibling: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FCE7F3"/><circle cx="155" cy="80" r="30" fill="#F472B6"/><path d="M115 170 Q155 120 195 170" fill="#F472B6"/><circle cx="245" cy="80" r="30" fill="#60A5FA"/><path d="M205 170 Q245 120 285 170" fill="#60A5FA"/></svg>`,
+            schedule: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#DBEAFE"/><rect x="120" y="35" width="160" height="135" rx="10" fill="white" stroke="#3B82F6" stroke-width="6"/><rect x="120" y="35" width="160" height="35" rx="8" fill="#EF4444"/><circle cx="155" cy="100" r="8" fill="#10B981"/><line x1="175" y1="100" x2="255" y2="100" stroke="#9CA3AF" stroke-width="6"/><circle cx="155" cy="135" r="8" fill="#10B981"/><line x1="175" y1="135" x2="255" y2="135" stroke="#9CA3AF" stroke-width="6"/></svg>`,
+            tournament: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FEF9C3"/><path d="M150 45 H250 V95 Q250 140 200 140 Q150 140 150 95 Z" fill="#F59E0B"/><rect x="185" y="140" width="30" height="25" fill="#D97706"/><rect x="155" y="165" width="90" height="15" rx="4" fill="#B45309"/><circle cx="200" cy="85" r="18" fill="#FEF08A"/></svg>`,
+            leisure: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#E0F2FE"/><path d="M130 130 A70 70 0 0 1 270 130" fill="none" stroke="#4F46E5" stroke-width="14" stroke-linecap="round"/><rect x="115" y="115" width="28" height="48" rx="10" fill="#1E1B4B"/><rect x="257" y="115" width="28" height="48" rx="10" fill="#1E1B4B"/><circle cx="200" cy="115" r="18" fill="#38BDF8"/></svg>`,
+            photography: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#F3E8FF"/><rect x="120" y="60" width="160" height="100" rx="14" fill="#1F2937"/><rect x="165" y="42" width="70" height="20" rx="6" fill="#374151"/><circle cx="200" cy="110" r="32" fill="#60A5FA" stroke="white" stroke-width="6"/><circle cx="255" cy="80" r="7" fill="#EF4444"/></svg>`,
+            journey: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#D1FAE5"/><polygon points="40,160 130,50 220,160" fill="#10B981"/><polygon points="160,160 260,35 360,160" fill="#059669"/><rect x="70" y="115" width="260" height="45" rx="10" fill="#EF4444"/><rect x="95" y="125" width="40" height="20" fill="#DBEAFE"/><rect x="155" y="125" width="40" height="20" fill="#DBEAFE"/><rect x="215" y="125" width="40" height="20" fill="#DBEAFE"/><line x1="0" y1="162" x2="400" y2="162" stroke="#374151" stroke-width="6"/></svg>`,
+            scenery: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#BAE6FD"/><circle cx="310" cy="55" r="28" fill="#FBBF24"/><polygon points="20,180 140,60 260,180" fill="#047857"/><polygon points="150,180 270,50 390,180" fill="#065F46"/><rect x="0" y="165" width="400" height="35" fill="#34D399"/></svg>`,
+            passenger: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#E0E7FF"/><rect x="100" y="35" width="200" height="130" rx="16" fill="#4F46E5"/><rect x="125" y="55" width="150" height="75" rx="8" fill="#BAE6FD"/><circle cx="200" cy="85" r="18" fill="#F59E0B"/><path d="M165 130 Q200 100 235 130" fill="#F59E0B"/></svg>`,
+            market: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FFEDD5"/><rect x="100" y="80" width="200" height="95" fill="#FBBF24"/><polygon points="85,80 120,40 280,40 315,80" fill="#EF4444"/><circle cx="155" cy="130" r="16" fill="#DC2626"/><circle cx="200" cy="130" r="16" fill="#16A34A"/><circle cx="245" cy="130" r="16" fill="#EA580C"/></svg>`,
+            healthy: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#DCFCE7"/><path d="M120 105 Q200 185 280 105 Z" fill="#D97706"/><circle cx="165" cy="95" r="24" fill="#EF4444"/><circle cx="205" cy="90" r="26" fill="#22C55E"/><circle cx="240" cy="98" r="22" fill="#F59E0B"/></svg>`,
+            ingredient: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FEF3C7"/><rect x="120" y="65" width="75" height="95" rx="8" fill="white" stroke="#D97706" stroke-width="5"/><text x="157" y="120" font-size="14" fill="#D97706" text-anchor="middle" font-weight="bold">FLOUR</text><circle cx="245" cy="135" r="22" fill="#FDE047" stroke="#CA8A04" stroke-width="4"/><circle cx="280" cy="140" r="20" fill="#FDE047" stroke="#CA8A04" stroke-width="4"/></svg>`
+        };
+
+        const defaultVocab = [
+            { word: "classroom", theme: "SCHOOL & EDUCATION", def: "A room in a school where students learn.", sentence: "\"The teacher wrote the rules on the _______ whiteboard.\"", options: ["classroom", "habit", "relative", "journey"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "subject", theme: "SCHOOL & EDUCATION", def: "An area of knowledge studied in school.", sentence: "\"English is my favourite school _______.\"", options: ["project", "subject", "scenery", "balance"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "experiment", theme: "SCHOOL & EDUCATION", def: "A scientific test done in a laboratory to learn something.", sentence: "\"We did a fun science _______ in the lab today.\"", options: ["experiment", "timetable", "passenger", "leisure"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "routine", theme: "PERSONAL IDENTITY", def: "A sequence of actions regularly followed.", sentence: "\"My morning _______ includes eating breakfast at 6:30 AM.\"", options: ["routine", "journey", "market", "lesson"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "sibling", theme: "PERSONAL IDENTITY", def: "A brother or a sister.", sentence: "\"I have one younger _______ in my family.\"", options: ["passenger", "sibling", "subject", "habit"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "schedule", theme: "PERSONAL IDENTITY", def: "A plan for carrying out activities and times.", sentence: "\"She has a busy daily _______ after school.\"", options: ["schedule", "scenery", "ingredient", "market"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "tournament", theme: "FREE TIME & HOBBIES", def: "A sports competition with several matches.", sentence: "\"Our school team won the district netball _______.\"", options: ["tournament", "ingredient", "environment", "schedule"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "leisure", theme: "FREE TIME & HOBBIES", def: "Free time when you are not working or studying.", sentence: "\"I enjoy listening to music during my _______ time.\"", options: ["routine", "leisure", "journey", "relative"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "photography", theme: "FREE TIME & HOBBIES", def: "The hobby or activity of taking pictures with a camera.", sentence: "\"He joined the nature _______ club at school.\"", options: ["photography", "experiment", "classroom", "appetite"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "journey", theme: "TRAVEL & ENVIRONMENT", def: "An act of traveling from one place to another.", sentence: "\"The bus _______ to Kota Kinabalu took two hours.\"", options: ["market", "classroom", "journey", "appetite"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "scenery", theme: "TRAVEL & ENVIRONMENT", def: "The natural features of a beautiful landscape.", sentence: "\"The mountain _______ in Sabah is very peaceful.\"", options: ["scenery", "timetable", "cinema", "receipt"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "passenger", theme: "TRAVEL & ENVIRONMENT", def: "A traveler riding in a bus, train, or car.", sentence: "\"Every _______ on the bus wore a seatbelt.\"", options: ["passenger", "sibling", "teacher", "doctor"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "market", theme: "HEALTH, FOOD & SHOPPING", def: "An open place where people buy fresh food.", sentence: "\"We bought fresh vegetables at the Sunday _______.\"", options: ["station", "market", "project", "experiment"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "healthy", theme: "HEALTH, FOOD & SHOPPING", def: "In good physical condition; not sick.", sentence: "\"Eating fresh fruits and vegetables keeps your body _______.\"", options: ["sick", "healthy", "passenger", "leisure"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 },
+            { word: "ingredient", theme: "HEALTH, FOOD & SHOPPING", def: "One of the foods used to make a dish or recipe.", sentence: "\"Fresh chili is the main _______ in this dish.\"", options: ["ingredient", "receipt", "tournament", "schedule"], mastery: 0, errors: 0, recogTries: 0, recogHits: 0, recallTries: 0, recallHits: 0, totalMs: 0 }
+        ];
+
+        const vineTiles = [4, 11, 19, 25];
+        const mudTiles = [8, 16, 23, 28];
+        const campTiles = [6, 12, 18, 24];
+
+        // Persistent Student State
+        let vocabDatabase = JSON.parse(localStorage.getItem('lt35_vocab')) || JSON.parse(JSON.stringify(defaultVocab));
+        let playerPos = parseInt(localStorage.getItem('lt35_pos')) || 1;
+        let streak = parseInt(localStorage.getItem('lt35_streak')) || 0;
+        let totalScore = parseInt(localStorage.getItem('lt35_score')) || 20;
+        let laps = parseInt(localStorage.getItem('lt35_laps')) || 1;
+        let hintsOwned = parseInt(localStorage.getItem('lt35_hints')) ?? 1;
+        let shieldsOwned = parseInt(localStorage.getItem('lt35_shields')) || 0;
+        let studentName = localStorage.getItem('lt35_name') || "";
+        let studentAvatar = localStorage.getItem('lt35_avatar') || "🧗";
+        let activeSeconds = parseInt(localStorage.getItem('lt35_time')) || 0;
+        let badgesUnlocked = JSON.parse(localStorage.getItem('lt35_badges')) || [false, false, false, false, false];
+
+        let currentCard = null;
+        let pendingMove = 0;
+        let answered = false;
+        let cardStartTime = 0;
+        let revealedLetters = 1;
+
+        // Track Active Time-on-Task every second
+        setInterval(() => {
+            if (!document.hidden) {
+                activeSeconds++;
+                localStorage.setItem('lt35_time', activeSeconds);
+            }
+        }, 1000);
+
+        function renderBoard() {
+            const grid = document.getElementById('board-grid');
+            grid.innerHTML = '';
+
+            for (let row = 5; row >= 0; row--) {
+                let rowTiles = [];
+                for (let col = 0; col < 5; col++) rowTiles.push(row * 5 + col + 1);
+                if (row % 2 === 1) rowTiles.reverse();
+
+                rowTiles.forEach(tileNum => {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    let icon = '🐾';
+
+                    if (tileNum === 1) icon = '🚩';
+                    else if (tileNum === 30) { tile.classList.add('summit'); icon = '🏔️'; }
+                    else if (vineTiles.includes(tileNum)) { tile.classList.add('vine'); icon = '🌿'; }
+                    else if (mudTiles.includes(tileNum)) { tile.classList.add('mud'); icon = '🌧️'; }
+                    else if (campTiles.includes(tileNum)) { tile.classList.add('camp'); icon = '⛺'; }
+
+                    if (tileNum === playerPos) tile.classList.add('active-tile');
+
+                    tile.innerHTML = `
+                        <span class="tile-num">${tileNum}</span>
+                        <span class="tile-icon">${icon}</span>
+                        ${tileNum === playerPos ? `<div class="player-token">${studentAvatar}</div>` : ''}
+                    `;
+                    grid.appendChild(tile);
+                });
+            }
+
+            // Update UI Counters
+            document.getElementById('nav-avatar').innerText = studentAvatar;
+            document.getElementById('nav-name').innerText = studentName || "Climber";
+            document.getElementById('streak-count').innerText = streak;
+            document.getElementById('score-count').innerText = totalScore;
+            document.getElementById('pos-display').innerText = playerPos;
+            document.getElementById('lap-display').innerText = laps;
+            document.getElementById('hint-count').innerText = hintsOwned;
+            document.getElementById('shield-count').innerText = shieldsOwned;
+
+            const mastered = vocabDatabase.filter(item => item.mastery >= 2).length;
+            document.getElementById('mastered-display').innerText = `${mastered}/${vocabDatabase.length}`;
+
+            // Update Badges
+            badgesUnlocked.forEach((unlocked, idx) => {
+                const el = document.getElementById(`badge-${idx}`);
+                if (el) el.classList.toggle('unlocked', unlocked);
+            });
+
+            const zoneNames = [
+                "Zone 1: Tamu & Health Foothills",
+                "Zone 2: School & Education Trail",
+                "Zone 3: Personal Identity Ridge",
+                "Zone 4: Free Time & Hobbies Camp",
+                "Zone 5: Travel & Low's Peak Summit"
+            ];
+            let zoneIdx = Math.min(4, Math.floor((playerPos - 1) / 6));
+            document.getElementById('zone-title').innerText = zoneNames[zoneIdx];
+        }
+
+        function buyGear(type) {
+            if (type === 'hint') {
+                if (totalScore >= 20) {
+                    totalScore -= 20;
+                    hintsOwned++;
+                    sfxCorrect();
+                    saveProgress();
+                    renderBoard();
+                } else alert("Need 20 ⭐ Stars to buy a Torchlight Hint!");
+            } else if (type === 'shield') {
+                if (totalScore >= 30) {
+                    totalScore -= 30;
+                    shieldsOwned++;
+                    sfxCorrect();
+                    saveProgress();
+                    renderBoard();
+                } else alert("Need 30 ⭐ Stars to buy Crampon Boots!");
+            }
+        }
+
+        function formatScaffold(word, revealCount) {
+            return word.split('').map((ch, i) => (i < revealCount || i === word.length - 1) ? ch.toUpperCase() : '_').join(' ') + ` (${word.length})`;
+        }
+
+        function triggerDiceChallenge() {
+            answered = false;
+            revealedLetters = 1;
+            cardStartTime = Date.now();
+
+            const selectedModule = document.getElementById('module-select').value;
+            let pool = selectedModule === "ALL" ? [...vocabDatabase] : vocabDatabase.filter(item => item.theme === selectedModule);
+
+            pool.sort((a, b) => a.mastery - b.mastery || (b.errors || 0) - (a.errors || 0) || (0.5 - Math.random()));
+            currentCard = pool[0];
+
+            document.getElementById('theme-text').innerText = currentCard.theme;
+            document.getElementById('definition-text').innerText = currentCard.def;
+            document.getElementById('sentence-text').innerText = currentCard.sentence;
+            document.getElementById('svg-container').innerHTML = offlineArt[currentCard.word] || offlineArt['classroom'];
+            document.getElementById('feedback-area').style.display = 'none';
+            document.getElementById('modal-hint-cnt').innerText = hintsOwned;
+            document.getElementById('use-hint-btn').style.display = hintsOwned > 0 ? 'block' : 'none';
+
+            const recogMode = document.getElementById('recognition-mode');
+            const recallMode = document.getElementById('recall-mode');
+            const typingInput = document.getElementById('typing-input');
+            const modeBadge = document.getElementById('mode-indicator');
+            const stakeBadge = document.getElementById('stake-indicator');
+
+            if (currentCard.mastery === 0) {
+                modeBadge.innerText = "Step 1: Recognition";
+                modeBadge.style.background = "#DBEAFE";
+                modeBadge.style.color = "#1E40AF";
+                stakeBadge.innerText = "🎲 Roll 1–2 Tiles";
+                recogMode.style.display = 'grid';
+                recallMode.style.display = 'none';
+                recogMode.innerHTML = '';
+                
+                let opts = [...currentCard.options].sort(() => 0.5 - Math.random());
+                opts.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkMCQ(opt, btn, currentCard.word);
+                    recogMode.appendChild(btn);
+                });
+            } else {
+                modeBadge.innerText = "Step 2: Active Recall";
+                modeBadge.style.background = "#FEF3C7";
+                modeBadge.style.color = "#92400E";
+                stakeBadge.innerText = "⚡ Power Roll 2–4 Tiles!";
+                recogMode.style.display = 'none';
+                recallMode.style.display = 'block';
+                document.getElementById('scaffold-letters').innerText = formatScaffold(currentCard.word, revealedLetters);
+                typingInput.value = '';
+                typingInput.disabled = false;
+                typingInput.style.borderColor = "#D1D5DB";
+                typingInput.style.backgroundColor = "white";
+            }
+
+            document.getElementById('challenge-modal').classList.add('open');
+        }
+
+        function useTorchHint() {
+            if (hintsOwned <= 0 || answered) return;
+            hintsOwned--;
+            document.getElementById('modal-hint-cnt').innerText = hintsOwned;
+            if (hintsOwned <= 0) document.getElementById('use-hint-btn').style.display = 'none';
+
+            if (currentCard.mastery === 0) {
+                // Eliminate 2 wrong MCQ options
+                const buttons = Array.from(document.querySelectorAll('.option-btn'));
+                let wrongBtns = buttons.filter(b => b.innerText.toLowerCase() !== currentCard.word.toLowerCase() && !b.classList.contains('hidden-opt'));
+                wrongBtns.slice(0, 2).forEach(b => b.classList.add('hidden-opt'));
+            } else {
+                // Reveal next letter in Active Recall
+                revealedLetters = Math.min(currentCard.word.length - 1, revealedLetters + 2);
+                document.getElementById('scaffold-letters').innerText = formatScaffold(currentCard.word, revealedLetters);
+            }
+            saveProgress();
+            renderBoard();
+        }
+
+        function checkMCQ(selectedWord, btnElement, correctWord) {
+            if (answered) return;
+            answered = true;
+            const elapsedMs = Date.now() - cardStartTime;
+
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.style.pointerEvents = 'none');
+
+            currentCard.recogTries = (currentCard.recogTries || 0) + 1;
+            currentCard.totalMs = (currentCard.totalMs || 0) + elapsedMs;
+
+            const isCorrect = selectedWord.toLowerCase() === correctWord.toLowerCase();
+            if (isCorrect) {
+                sfxCorrect();
+                btnElement.classList.add('correct');
+                currentCard.recogHits = (currentCard.recogHits || 0) + 1;
+                currentCard.mastery = 1; // Graduate to Active Recall
+                pendingMove = Math.floor(Math.random() * 2) + 1;
+            } else {
+                sfxWrong();
+                btnElement.classList.add('incorrect');
+                buttons.forEach(b => { if (b.innerText.toLowerCase() === correctWord.toLowerCase()) b.classList.add('correct'); });
+                currentCard.mastery = 0;
+                currentCard.errors = (currentCard.errors || 0) + 1;
+                pendingMove = mudTiles.includes(playerPos) ? -1 : 0;
+            }
+            showFeedback(isCorrect, correctWord, elapsedMs);
+        }
+
+        function checkTypedAnswer() {
+            if (answered) return;
+            const inputEl = document.getElementById('typing-input');
+            if (!inputEl.value.trim()) return;
+            answered = true;
+            inputEl.disabled = true;
+            const elapsedMs = Date.now() - cardStartTime;
+
+            currentCard.recallTries = (currentCard.recallTries || 0) + 1;
+            currentCard.totalMs = (currentCard.totalMs || 0) + elapsedMs;
+
+            const typedWord = inputEl.value.trim().toLowerCase();
+            const correctWord = currentCard.word.toLowerCase();
+            
+            const isCorrect = typedWord === correctWord;
+            if (isCorrect) {
+                sfxCorrect();
+                inputEl.style.borderColor = "var(--correct)";
+                inputEl.style.backgroundColor = "#D1FAE5";
+                currentCard.recallHits = (currentCard.recallHits || 0) + 1;
+                currentCard.mastery = 2; // Fully Mastered
+                pendingMove = Math.floor(Math.random() * 3) + 2; // Power Roll 2-4
+            } else {
+                sfxWrong();
+                inputEl.style.borderColor = "var(--incorrect)";
+                inputEl.style.backgroundColor = "#FEE2E2";
+                currentCard.mastery = 0; // Revert to Blocked Recognition
+                currentCard.errors = (currentCard.errors || 0) + 1;
+                pendingMove = mudTiles.includes(playerPos) ? -1 : 0;
+            }
+            showFeedback(isCorrect, correctWord, elapsedMs);
+        }
+
+        function showFeedback(isCorrect, correctWord, elapsedMs) {
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackMessage = document.getElementById('feedback-message');
+            const sec = (elapsedMs / 1000).toFixed(1);
+
+            if (isCorrect) {
+                feedbackArea.style.backgroundColor = '#D1FAE5';
+                feedbackArea.style.color = '#065F46';
+                feedbackMessage.innerText = `✅ Spot on in ${sec}s! "${correctWord.toUpperCase()}" rolled +${pendingMove} tiles! (+10⭐)`;
+                streak++;
+                totalScore += 10;
+            } else {
+                feedbackArea.style.backgroundColor = '#FEE2E2';
+                feedbackArea.style.color = '#991B1B';
+                let slipMsg = pendingMove === -1 ? (shieldsOwned > 0 ? "🥾 Crampon Boots blocked the mudslide!" : "🌧️ Slipped back 1 tile.") : "Stay on current tile.";
+                feedbackMessage.innerText = `❌ Corrective Feedback: The word is "${correctWord.toUpperCase()}". ${slipMsg}`;
+                streak = 0;
+            }
+
+            saveProgress();
+            feedbackArea.style.display = 'block';
+        }
+
+        // Animated Step-by-Step Climber Movement
+        function closeModalAndMove() {
+            document.getElementById('challenge-modal').classList.remove('open');
+
+            if (pendingMove > 0) {
+                let stepsRemaining = pendingMove;
+                document.getElementById('last-roll-text').innerText = `🎲 Rolling +${pendingMove}...`;
+
+                const hopInterval = setInterval(() => {
+                    if (stepsRemaining > 0 && playerPos < 30) {
+                        playerPos++;
+                        stepsRemaining--;
+                        sfxHop();
+                        // Unlock Base Camp Badges when passing or landing
+                        if (playerPos >= 6) badgesUnlocked[0] = true;
+                        if (playerPos >= 12) badgesUnlocked[1] = true;
+                        if (playerPos >= 18) badgesUnlocked[2] = true;
+                        if (playerPos >= 24) badgesUnlocked[3] = true;
+                        if (playerPos >= 30) badgesUnlocked[4] = true;
+                        renderBoard();
+                    } else {
+                        clearInterval(hopInterval);
+                        finalizeTileEvents();
+                    }
+                }, 260);
+            } else if (pendingMove < 0) {
+                if (shieldsOwned > 0) {
+                    shieldsOwned--;
+                    document.getElementById('last-roll-text').innerText = `🥾 Crampons saved you!`;
+                } else {
+                    playerPos = Math.max(1, playerPos - 1);
+                    document.getElementById('last-roll-text').innerText = `🌧️ Slipped back 1 tile.`;
+                }
+                saveProgress();
+                renderBoard();
+            } else {
+                document.getElementById('last-roll-text').innerText = `🛡️ Held position. Try again!`;
+                saveProgress();
+                renderBoard();
+            }
+        }
+
+        function finalizeTileEvents() {
+            let statusMsg = `🎲 Moved +${pendingMove} tiles!`;
+
+            if (vineTiles.includes(playerPos)) {
+                playerPos = Math.min(30, playerPos + 2);
+                totalScore += 15;
+                sfxCorrect();
+                statusMsg = `🌿 Vine Boost! +2 Extra Tiles!`;
+            } else if (campTiles.includes(playerPos)) {
+                totalScore += 20;
+                sfxCorrect();
+                statusMsg = `⛺ Base Camp! +20 Bonus ⭐!`;
+            } else if (mudTiles.includes(playerPos)) {
+                statusMsg = `🌧️ On Mudslide! Be careful!`;
+            }
+
+            if (playerPos === 30) {
+                totalScore += 100;
+                laps++;
+                sfxCorrect();
+                setTimeout(() => {
+                    alert(`🏔️ SUMMIT REACHED! Congratulations ${studentName || 'Climber'}! You conquered Mount Kinabalu (+100⭐) and unlocked the Low's Peak Medal! Starting Lap ${laps}!`);
+                    playerPos = 1;
+                    saveProgress();
+                    renderBoard();
+                }, 350);
+            }
+
+            document.getElementById('last-roll-text').innerText = statusMsg;
+            saveProgress();
+            renderBoard();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('lt35_vocab', JSON.stringify(vocabDatabase));
+            localStorage.setItem('lt35_pos', playerPos);
+            localStorage.setItem('lt35_streak', streak);
+            localStorage.setItem('lt35_score', totalScore);
+            localStorage.setItem('lt35_laps', laps);
+            localStorage.setItem('lt35_hints', hintsOwned);
+            localStorage.setItem('lt35_shields', shieldsOwned);
+            localStorage.setItem('lt35_badges', JSON.stringify(badgesUnlocked));
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('bottom-bar').style.display = screenId === 'board-screen' ? 'flex' : 'none';
+            renderBoard();
+        }
+
+        // Compute Empirical Analytics & Render Log
+        function showProgressLog() {
+            let totalRecogTries = 0, totalRecogHits = 0;
+            let totalRecallTries = 0, totalRecallHits = 0;
+            let totalMsAll = 0;
+
+            const logList = document.getElementById('log-list');
+            logList.innerHTML = '';
+
+            vocabDatabase.forEach(item => {
+                totalRecogTries += (item.recogTries || 0);
+                totalRecogHits += (item.recogHits || 0);
+                totalRecallTries += (item.recallTries || 0);
+                totalRecallHits += (item.recallHits || 0);
+                totalMsAll += (item.totalMs || 0);
+
+                let tries = (item.recogTries || 0) + (item.recallTries || 0);
+                let avgSec = tries > 0 ? ((item.totalMs || 0) / tries / 1000).toFixed(1) + 's' : '-';
+
+                let statusText = "Step 1: Recognition";
+                let bg = "#DBEAFE", col = "#1E40AF";
+                if (item.mastery === 1) { statusText = "Step 2: Recall"; bg = "#FEF3C7"; col = "#92400E"; }
+                if (item.mastery >= 2) { statusText = "Mastered ✅"; bg = "#D1FAE5"; col = "#065F46"; }
+
+                logList.innerHTML += `
+                    <div class="log-item">
+                        <div>
+                            <div class="log-word">${item.word}</div>
+                            <div style="font-size:11px; color:#6B7280;">${item.theme} • Tries: ${tries} • Errors: ${item.errors || 0} • Avg Speed: ${avgSec}</div>
+                        </div>
+                        <span class="log-status" style="background:${bg}; color:${col};">${statusText}</span>
+                    </div>
+                `;
+            });
+
+            const recogPct = totalRecogTries > 0 ? Math.round((totalRecogHits / totalRecogTries) * 100) : 0;
+            const recallPct = totalRecallTries > 0 ? Math.round((totalRecallHits / totalRecallTries) * 100) : 0;
+            const allTries = totalRecogTries + totalRecallTries;
+            const avgLatency = allTries > 0 ? (totalMsAll / allTries / 1000).toFixed(1) : "0.0";
+            const mins = Math.floor(activeSeconds / 60), secs = activeSeconds % 60;
+
+            document.getElementById('kpi-recog').innerText = `${recogPct}% (${totalRecogHits}/${totalRecogTries})`;
+            document.getElementById('kpi-recall').innerText = `${recallPct}% (${totalRecallHits}/${totalRecallTries})`;
+            document.getElementById('kpi-latency').innerText = `${avgLatency}s`;
+            document.getElementById('kpi-time').innerText = `${mins}m ${secs}s`;
+
+            showScreen('log-screen');
+        }
+
+        // Export Empirical Data to CSV for SPSS / Excel Analysis
+        function exportResearchCSV() {
+            let csv = "Student_ID,Word,Pulse2_Module,Mastery_Stage,Total_Exposures,Recog_Attempts,Recog_Correct,Recall_Attempts,Recall_Correct,Total_Errors,Avg_Response_Time_Ms,Total_Time_On_Task_Sec\n";
+            vocabDatabase.forEach(item => {
+                let tries = (item.recogTries || 0) + (item.recallTries || 0);
+                let avgMs = tries > 0 ? Math.round((item.totalMs || 0) / tries) : 0;
+                csv += `"${studentName || 'Anon'}","${item.word}","${item.theme}",${item.mastery},${tries},${item.recogTries || 0},${item.recogHits || 0},${item.recallTries || 0},${item.recallHits || 0},${item.errors || 0},${avgMs},${activeSeconds}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `LexiTrek_Data_${studentName || 'Student'}.csv`;
+            a.click();
+        }
+
+        // Copy Formatted Progress Report for WhatsApp / Teacher
+        function copyReportForTeacher() {
+            const mastered = vocabDatabase.filter(i => i.mastery >= 2).length;
+            const mins = Math.floor(activeSeconds / 60);
+            const report = `📊 *LexiTrek 3.5 Student Report*\n👤 Student: ${studentName || 'Climber'} ${studentAvatar}\n🏔️ Summit Tile: ${playerPos}/30 (Lap ${laps})\n✅ Mastered Words: ${mastered}/15\n⭐ Score: ${totalScore} | 🔥 Streak: ${streak}\n⏱️ Time-on-Task: ${mins} mins\n🎯 Receptive Acc: ${document.getElementById('kpi-recog').innerText}\n✍️ Productive Acc: ${document.getElementById('kpi-recall').innerText}\n⚡ Avg Speed: ${document.getElementById('kpi-latency').innerText}`;
+            navigator.clipboard.writeText(report).then(() => {
+                alert("✅ Report copied to clipboard! You can now paste it into WhatsApp or Telegram for your teacher.");
+            }).catch(() => {
+                prompt("Copy this report for your teacher:", report);
+            });
+        }
+
+        // Profile & Avatar Functions
+        function openProfileModal() {
+            document.getElementById('student-name-input').value = studentName;
+            document.getElementById('profile-modal').classList.add('open');
+        }
+        function selectAvatar(emoji, el) {
+            studentAvatar = emoji;
+            document.querySelectorAll('.avatar-opt').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+        function saveProfile() {
+            const val = document.getElementById('student-name-input').value.trim();
+            studentName = val || "Climber";
+            localStorage.setItem('lt35_name', studentName);
+            localStorage.setItem('lt35_avatar', studentAvatar);
+            document.getElementById('profile-modal').classList.remove('open');
+            renderBoard();
+        }
+
+        function resetProgress() {
+            if (confirm("Reset all student analytics, climber position, and word mastery back to zero?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function playAudio() {
+            if ('speechSynthesis' in window && currentCard) {
+                const utterance = new SpeechSynthesisUtterance(currentCard.word);
+                utterance.lang = 'en-GB';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateNetworkStatus() {
+            const dot = document.getElementById('net-dot');
+            const txt = document.getElementById('net-text');
+            if (navigator.onLine) { dot.classList.remove('offline'); txt.innerText = "Online"; }
+            else { dot.classList.add('offline'); txt.innerText = "Offline"; }
+        }
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
+
+        window.onload = () => {
+            if (!studentName) openProfileModal();
+            renderBoard();
+            updateNetworkStatus();
+        };
+    </script>
+</body>
+</html>
