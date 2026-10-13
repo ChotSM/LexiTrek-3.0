@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4F46E5">
+    <title>LexiTrek - Pulse 2 Vocabulary</title>
+    
+    <!-- Link to PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #EEF2FF;
+            --bg-color: #F3F4F6;
+            --text-dark: #1F2937;
+            --text-light: #6B7280;
+            --correct: #10B981;
+            --incorrect: #EF4444;
+        }
+
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+
+        /* Navbar */
+        .navbar { background-color: var(--primary); width: 100%; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10; }
+        .logo { font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .stats { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+        .badge { background: rgba(0,0,0,0.25); padding: 5px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #34D399; display: inline-block; }
+        .status-dot.offline { background: #FBBF24; }
+
+        /* Container & Screens */
+        .app-container { width: 100%; max-width: 520px; padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
+        .screen { display: none; width: 100%; animation: fadeIn 0.25s ease-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
+        .card { background: white; border-radius: 18px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 16px; }
+        .home-title { color: var(--primary); font-size: 24px; margin-bottom: 6px; text-align: center; }
+        .home-sub { color: var(--text-light); font-size: 13px; margin-bottom: 18px; text-align: center; line-height: 1.5; }
+
+        /* Dashboard Stats */
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+        .dash-box { background: var(--primary-light); padding: 14px; border-radius: 12px; text-align: center; }
+        .dash-num { font-size: 22px; font-weight: 800; color: var(--primary); }
+        .dash-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+        /* Theme Filter */
+        .filter-label { font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 6px; display: block; text-transform: uppercase; }
+        .theme-select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #E5E7EB; font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 16px; background: white; }
+
+        /* Buttons */
+        .primary-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2); margin-bottom: 10px; }
+        .secondary-btn { background: white; color: var(--text-dark); border: 1px solid #D1D5DB; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 8px; }
+
+        /* Header Controls */
+        .header-controls { display: flex; justify-content: space-between; align-items: center; color: var(--text-light); margin-bottom: 12px; font-weight: 600; font-size: 14px; }
+        .back-link { cursor: pointer; padding: 5px 10px; border-radius: 8px; background: #E5E7EB; color: var(--text-dark); font-size: 13px; }
+        .mode-badge { font-size: 11px; padding: 4px 8px; border-radius: 6px; background: #DBEAFE; color: #1E40AF; font-weight: 700; text-transform: uppercase; }
+
+        /* Media Box (Built-in Offline SVG Illustrations) */
+        .media-box { width: 100%; height: 185px; background-color: #DBEAFE; border-radius: 14px; position: relative; overflow: hidden; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; }
+        .svg-illustration { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .audio-btn { position: absolute; bottom: 12px; right: 12px; background: white; border: none; border-radius: 50%; width: 44px; height: 44px; box-shadow: 0 3px 8px rgba(0,0,0,0.15); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+
+        /* Question Text */
+        .theme-label { color: var(--primary); font-size: 11px; font-weight: 800; text-transform: uppercase; text-align: center; letter-spacing: 0.8px; margin-bottom: 6px; }
+        .definition { text-align: center; font-size: 17px; font-weight: 700; margin-bottom: 12px; line-height: 1.35; }
+        .sentence-box { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 12px; text-align: center; font-style: italic; color: var(--text-dark); margin-bottom: 18px; font-size: 15px; }
+
+        /* Options & Recall */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-btn { background: white; border: 2px solid #E5E7EB; border-radius: 10px; padding: 14px 10px; font-size: 15px; font-weight: 600; color: var(--text-dark); cursor: pointer; text-transform: capitalize; }
+        .option-btn.correct { border-color: var(--correct); background: #D1FAE5; color: #065F46; }
+        .option-btn.incorrect { border-color: var(--incorrect); background: #FEE2E2; color: #991B1B; }
+
+        .recall-mode { display: none; text-align: center; }
+        .typing-input { width: 100%; padding: 14px; border: 2px solid #D1D5DB; border-radius: 10px; font-size: 17px; text-align: center; margin-bottom: 12px; font-weight: 700; outline: none; }
+        .typing-input:focus { border-color: var(--primary); }
+
+        /* Feedback */
+        #feedback-area { margin-top: 16px; padding: 14px; border-radius: 10px; text-align: center; font-weight: 600; display: none; font-size: 14px; line-height: 1.4; }
+        .next-btn { margin-top: 12px; background: var(--text-dark); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; }
+
+        /* Error Log List */
+        .log-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #E5E7EB; font-size: 14px; }
+        .log-word { font-weight: 700; color: var(--primary); text-transform: capitalize; }
+        .log-status { font-size: 12px; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo" onclick="showScreen('home-screen')">⛰️ LexiTrek</div>
+        <div class="stats">
+            <div class="badge" title="Connection Status">
+                <span class="status-dot" id="net-dot"></span>
+                <span id="net-text">Online</span>
+            </div>
+            <div class="badge">🔥 <span id="streak-count">0</span></div>
+            <div class="badge">⭐ <span id="score-count">0</span></div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- HOME SCREEN -->
+        <div id="home-screen" class="screen active">
+            <div class="card">
+                <h1 class="home-title">LexiTrek Pulse 2</h1>
+                <p class="home-sub">Form 1 CEFR A2-Mid Gamified Vocabulary App</p>
+                
+                <div class="dash-grid">
+                    <div class="dash-box">
+                        <div class="dash-num" id="mastered-count">0 / 15</div>
+                        <div class="dash-label">Mastered (Recall)</div>
+                    </div>
+                    <div class="dash-box">
+                        <div class="dash-num" id="review-count">15</div>
+                        <div class="dash-label">In Learning Queue</div>
+                    </div>
+                </div>
+
+                <!-- Self-Determination Theory: Learner Autonomy via Module Selection -->
+                <label class="filter-label" for="module-select">Select Pulse 2 Thematic Module:</label>
+                <select id="module-select" class="theme-select">
+                    <option value="ALL">All Modules (Adaptive Mix)</option>
+                    <option value="PERSONAL IDENTITY">Personal Identity & Routine</option>
+                    <option value="SCHOOL & EDUCATION">School & Education</option>
+                    <option value="FREE TIME & HOBBIES">Free Time & Hobbies</option>
+                    <option value="TRAVEL & ENVIRONMENT">Travel & Environment</option>
+                    <option value="HEALTH, FOOD & SHOPPING">Health, Food & Shopping</option>
+                </select>
+
+                <button class="primary-btn" onclick="startSession()">Start Spaced Practice</button>
+                <button class="secondary-btn" onclick="showProgressLog()">📊 View Vocabulary Progress Log</button>
+                <button class="secondary-btn" style="color: #EF4444; border-color: #FECACA;" onclick="resetProgress()">Reset Student Data</button>
+            </div>
+        </div>
+
+        <!-- LEARN SCREEN -->
+        <div id="learn-screen" class="screen">
+            <div class="header-controls">
+                <span class="back-link" onclick="showScreen('home-screen')">← Exit</span>
+                <span class="mode-badge" id="mode-indicator">Recognition Mode</span>
+                <span id="question-counter">1 / 10</span>
+            </div>
+
+            <div class="card">
+                <div class="media-box">
+                    <div id="svg-container" class="svg-illustration"></div>
+                    <button class="audio-btn" onclick="playAudio()" title="Listen to pronunciation">🔊</button>
+                </div>
+
+                <div class="theme-label" id="theme-text">THEME</div>
+                <div class="definition" id="definition-text">Definition</div>
+                <div class="sentence-box" id="sentence-text">"Sentence"</div>
+
+                <!-- Multiple Choice (Recognition) -->
+                <div class="options-grid" id="recognition-mode"></div>
+
+                <!-- Typing (Active Recall) -->
+                <div class="recall-mode" id="recall-mode">
+                    <input type="text" id="typing-input" class="typing-input" placeholder="Type the missing word..." autocomplete="off">
+                    <button class="primary-btn" onclick="checkTypedAnswer()">Verify Answer</button>
+                </div>
+
+                <!-- Immediate Corrective Feedback -->
+                <div id="feedback-area">
+                    <p id="feedback-message"></p>
+                    <button class="next-btn" onclick="nextCard()">Continue →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRESS LOG SCREEN (Self-Regulated Learning) -->
+        <div id="log-screen" class="screen">
+            <div class="header-controls">
+                <span class="back-link" onclick="showScreen('home-screen')">← Back to Home</span>
+                <span>Self-Regulated Learning Log</span>
+            </div>
+            <div class="card">
+                <h3 style="margin-bottom: 12px; color: var(--primary);">Lexical Mastery & Error Log</h3>
+                <div id="log-list"></div>
+            </div>
+        </div>
+
+        <!-- SUMMARY SCREEN -->
+        <div id="summary-screen" class="screen">
+            <div class="card" style="text-align: center;">
+                <h2 class="home-title">Session Complete! 🎉</h2>
+                <p class="home-sub" style="margin-top:8px;">Words answered accurately in Recognition Mode have now unlocked Active Recall Mode for deeper memory consolidation.</p>
+                <div style="font-size: 42px; font-weight: 800; color: var(--correct); margin: 20px 0;" id="final-score">+0 pts</div>
+                <button class="primary-btn" onclick="showScreen('home-screen')">Return to Dashboard</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Built-in Offline Vector Graphics for all 15 Pulse 2 Target Words
+        const offlineArt = {
+            classroom: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#DBEAFE"/><rect x="80" y="30" width="240" height="110" rx="6" fill="#065F46" stroke="#D97706" stroke-width="8"/><text x="200" y="75" font-size="22" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">CLASSROOM</text><line x1="120" y1="100" x2="280" y2="100" stroke="#A7F3D0" stroke-width="4"/><rect x="60" y="155" width="90" height="45" fill="#B45309" rx="4"/><rect x="250" y="155" width="90" height="45" fill="#B45309" rx="4"/></svg>`,
+            subject: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#E0E7FF"/><rect x="110" y="40" width="80" height="110" rx="6" fill="#EF4444"/><rect x="130" y="55" width="50" height="15" fill="white"/><rect x="210" y="45" width="80" height="110" rx="6" fill="#3B82F6" transform="rotate(8 210 45)"/><circle cx="250" cy="100" r="22" fill="#FBBF24"/></svg>`,
+            experiment: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#EDE9FE"/><polygon points="160,155 185,75 215,75 240,155" fill="#34D399" stroke="#4F46E5" stroke-width="6"/><rect x="178" y="45" width="44" height="30" fill="none" stroke="#4F46E5" stroke-width="6"/><circle cx="195" cy="125" r="8" fill="white"/><circle cx="210" cy="105" r="6" fill="white"/><circle cx="200" cy="30" r="10" fill="#A78BFA"/></svg>`,
+            routine: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FEF3C7"/><circle cx="200" cy="100" r="65" fill="white" stroke="#F59E0B" stroke-width="8"/><line x1="200" y1="100" x2="200" y2="55" stroke="#1F2937" stroke-width="6" stroke-linecap="round"/><line x1="200" y1="100" x2="235" y2="100" stroke="#EF4444" stroke-width="6" stroke-linecap="round"/><circle cx="200" cy="100" r="6" fill="#1F2937"/></svg>`,
+            sibling: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FCE7F3"/><circle cx="155" cy="80" r="30" fill="#F472B6"/><path d="M115 170 Q155 120 195 170" fill="#F472B6"/><circle cx="245" cy="80" r="30" fill="#60A5FA"/><path d="M205 170 Q245 120 285 170" fill="#60A5FA"/></svg>`,
+            schedule: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#DBEAFE"/><rect x="120" y="35" width="160" height="135" rx="10" fill="white" stroke="#3B82F6" stroke-width="6"/><rect x="120" y="35" width="160" height="35" rx="8" fill="#EF4444"/><circle cx="155" cy="100" r="8" fill="#10B981"/><line x1="175" y1="100" x2="255" y2="100" stroke="#9CA3AF" stroke-width="6"/><circle cx="155" cy="135" r="8" fill="#10B981"/><line x1="175" y1="135" x2="255" y2="135" stroke="#9CA3AF" stroke-width="6"/></svg>`,
+            tournament: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FEF9C3"/><path d="M150 45 H250 V95 Q250 140 200 140 Q150 140 150 95 Z" fill="#F59E0B"/><rect x="185" y="140" width="30" height="25" fill="#D97706"/><rect x="155" y="165" width="90" height="15" rx="4" fill="#B45309"/><circle cx="200" cy="85" r="18" fill="#FEF08A"/></svg>`,
+            leisure: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#E0F2FE"/><path d="M130 130 A70 70 0 0 1 270 130" fill="none" stroke="#4F46E5" stroke-width="14" stroke-linecap="round"/><rect x="115" y="115" width="28" height="48" rx="10" fill="#1E1B4B"/><rect x="257" y="115" width="28" height="48" rx="10" fill="#1E1B4B"/><circle cx="200" cy="115" r="18" fill="#38BDF8"/></svg>`,
+            photography: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#F3E8FF"/><rect x="120" y="60" width="160" height="100" rx="14" fill="#1F2937"/><rect x="165" y="42" width="70" height="20" rx="6" fill="#374151"/><circle cx="200" cy="110" r="32" fill="#60A5FA" stroke="white" stroke-width="6"/><circle cx="255" cy="80" r="7" fill="#EF4444"/></svg>`,
+            journey: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#D1FAE5"/><polygon points="40,160 130,50 220,160" fill="#10B981"/><polygon points="160,160 260,35 360,160" fill="#059669"/><rect x="70" y="115" width="260" height="45" rx="10" fill="#EF4444"/><rect x="95" y="125" width="40" height="20" fill="#DBEAFE"/><rect x="155" y="125" width="40" height="20" fill="#DBEAFE"/><rect x="215" y="125" width="40" height="20" fill="#DBEAFE"/><line x1="0" y1="162" x2="400" y2="162" stroke="#374151" stroke-width="6"/></svg>`,
+            scenery: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#BAE6FD"/><circle cx="310" cy="55" r="28" fill="#FBBF24"/><polygon points="20,180 140,60 260,180" fill="#047857"/><polygon points="150,180 270,50 390,180" fill="#065F46"/><rect x="0" y="165" width="400" height="35" fill="#34D399"/></svg>`,
+            passenger: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#E0E7FF"/><rect x="100" y="35" width="200" height="130" rx="16" fill="#4F46E5"/><rect x="125" y="55" width="150" height="75" rx="8" fill="#BAE6FD"/><circle cx="200" cy="85" r="18" fill="#F59E0B"/><path d="M165 130 Q200 100 235 130" fill="#F59E0B"/></svg>`,
+            market: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FFEDD5"/><rect x="100" y="80" width="200" height="95" fill="#FBBF24"/><polygon points="85,80 120,40 280,40 315,80" fill="#EF4444"/><circle cx="155" cy="130" r="16" fill="#DC2626"/><circle cx="200" cy="130" r="16" fill="#16A34A"/><circle cx="245" cy="130" r="16" fill="#EA580C"/></svg>`,
+            healthy: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#DCFCE7"/><path d="M120 105 Q200 185 280 105 Z" fill="#D97706"/><circle cx="165" cy="95" r="24" fill="#EF4444"/><circle cx="205" cy="90" r="26" fill="#22C55E"/><circle cx="240" cy="98" r="22" fill="#F59E0B"/></svg>`,
+            ingredient: `<svg viewBox="0 0 400 200" width="100%" height="100%"><rect width="400" height="200" fill="#FEF3C7"/><rect x="120" y="65" width="75" height="95" rx="8" fill="white" stroke="#D97706" stroke-width="5"/><text x="157" y="120" font-size="14" fill="#D97706" text-anchor="middle" font-weight="bold">FLOUR</text><circle cx="245" cy="135" r="22" fill="#FDE047" stroke="#CA8A04" stroke-width="4"/><circle cx="280" cy="140" r="20" fill="#FDE047" stroke="#CA8A04" stroke-width="4"/></svg>`
+        };
+
+        const defaultVocab = [
+            { word: "classroom", theme: "SCHOOL & EDUCATION", def: "A room in a school where students learn.", sentence: "\"The teacher wrote the rules on the _______ whiteboard.\"", options: ["classroom", "habit", "relative", "journey"], mastery: 0, errors: 0 },
+            { word: "subject", theme: "SCHOOL & EDUCATION", def: "An area of knowledge studied in school.", sentence: "\"English is my favourite school _______.\"", options: ["project", "subject", "scenery", "balance"], mastery: 0, errors: 0 },
+            { word: "experiment", theme: "SCHOOL & EDUCATION", def: "A scientific test done in a laboratory to learn something.", sentence: "\"We did a fun science _______ in the lab today.\"", options: ["experiment", "timetable", "passenger", "leisure"], mastery: 0, errors: 0 },
+            { word: "routine", theme: "PERSONAL IDENTITY", def: "A sequence of actions regularly followed.", sentence: "\"My morning _______ includes eating breakfast at 6:30 AM.\"", options: ["routine", "journey", "market", "lesson"], mastery: 0, errors: 0 },
+            { word: "sibling", theme: "PERSONAL IDENTITY", def: "A brother or a sister.", sentence: "\"I have one younger _______ in my family.\"", options: ["passenger", "sibling", "subject", "habit"], mastery: 0, errors: 0 },
+            { word: "schedule", theme: "PERSONAL IDENTITY", def: "A plan for carrying out activities and times.", sentence: "\"She has a busy daily _______ after school.\"", options: ["schedule", "scenery", "ingredient", "market"], mastery: 0, errors: 0 },
+            { word: "tournament", theme: "FREE TIME & HOBBIES", def: "A sports competition with several matches.", sentence: "\"Our school team won the district netball _______.\"", options: ["tournament", "ingredient", "environment", "schedule"], mastery: 0, errors: 0 },
+            { word: "leisure", theme: "FREE TIME & HOBBIES", def: "Free time when you are not working or studying.", sentence: "\"I enjoy listening to music during my _______ time.\"", options: ["routine", "leisure", "journey", "relative"], mastery: 0, errors: 0 },
+            { word: "photography", theme: "FREE TIME & HOBBIES", def: "The hobby or activity of taking pictures with a camera.", sentence: "\"He joined the nature _______ club at school.\"", options: ["photography", "experiment", "classroom", "appetite"], mastery: 0, errors: 0 },
+            { word: "journey", theme: "TRAVEL & ENVIRONMENT", def: "An act of traveling from one place to another.", sentence: "\"The bus _______ to Kota Kinabalu took two hours.\"", options: ["market", "classroom", "journey", "appetite"], mastery: 0, errors: 0 },
+            { word: "scenery", theme: "TRAVEL & ENVIRONMENT", def: "The natural features of a beautiful landscape.", sentence: "\"The mountain _______ in Sabah is very peaceful.\"", options: ["scenery", "timetable", "cinema", "receipt"], mastery: 0, errors: 0 },
+            { word: "passenger", theme: "TRAVEL & ENVIRONMENT", def: "A traveler riding in a bus, train, or car.", sentence: "\"Every _______ on the bus wore a seatbelt.\"", options: ["passenger", "sibling", "teacher", "doctor"], mastery: 0, errors: 0 },
+            { word: "market", theme: "HEALTH, FOOD & SHOPPING", def: "An open place where people buy fresh food.", sentence: "\"We bought fresh vegetables at the Sunday _______.\"", options: ["station", "market", "project", "experiment"], mastery: 0, errors: 0 },
+            { word: "healthy", theme: "HEALTH, FOOD & SHOPPING", def: "In good physical condition; not sick.", sentence: "\"Eating fresh fruits and vegetables keeps your body _______.\"", options: ["sick", "healthy", "passenger", "leisure"], mastery: 0, errors: 0 },
+            { word: "ingredient", theme: "HEALTH, FOOD & SHOPPING", def: "One of the foods used to make a dish or recipe.", sentence: "\"Fresh chili is the main _______ in this dish.\"", options: ["ingredient", "receipt", "tournament", "schedule"], mastery: 0, errors: 0 }
+        ];
+
+        let vocabDatabase = JSON.parse(localStorage.getItem('lexitrek_v2_vocab')) || defaultVocab;
+        let streak = parseInt(localStorage.getItem('lexitrek_v2_streak')) || 0;
+        let totalScore = parseInt(localStorage.getItem('lexitrek_v2_score')) || 0;
+
+        let sessionQueue = [];
+        let currentIndex = 0;
+        let sessionScore = 0;
+        let answered = false;
+
+        function updateDashboard() {
+            document.getElementById('streak-count').innerText = streak;
+            document.getElementById('score-count').innerText = totalScore;
+            const mastered = vocabDatabase.filter(item => item.mastery >= 2).length;
+            const due = vocabDatabase.filter(item => item.mastery < 2).length;
+            document.getElementById('mastered-count').innerText = `${mastered} / ${vocabDatabase.length}`;
+            document.getElementById('review-count').innerText = due === 0 ? "All Mastered!" : due;
+        }
+
+        function saveProgress() {
+            localStorage.setItem('lexitrek_v2_vocab', JSON.stringify(vocabDatabase));
+            localStorage.setItem('lexitrek_v2_streak', streak);
+            localStorage.setItem('lexitrek_v2_score', totalScore);
+            updateDashboard();
+        }
+
+        function resetProgress() {
+            if (confirm("Reset all word mastery and scores back to zero?")) {
+                localStorage.clear();
+                vocabDatabase = JSON.parse(JSON.stringify(defaultVocab));
+                streak = 0;
+                totalScore = 0;
+                updateDashboard();
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            updateDashboard();
+        }
+
+        function showProgressLog() {
+            const logList = document.getElementById('log-list');
+            logList.innerHTML = '';
+            vocabDatabase.forEach(item => {
+                let statusText = "Recognition (Blocked)";
+                let bg = "#DBEAFE", col = "#1E40AF";
+                if (item.mastery === 1) { statusText = "Active Recall"; bg = "#FEF3C7"; col = "#92400E"; }
+                if (item.mastery >= 2) { statusText = "Mastered ✅"; bg = "#D1FAE5"; col = "#065F46"; }
+
+                logList.innerHTML += `
+                    <div class="log-item">
+                        <div>
+                            <div class="log-word">${item.word}</div>
+                            <div style="font-size:11px; color:#6B7280;">${item.theme} • Errors: ${item.errors || 0}</div>
+                        </div>
+                        <span class="log-status" style="background:${bg}; color:${col};">${statusText}</span>
+                    </div>
+                `;
+            });
+            showScreen('log-screen');
+        }
+
+        function startSession() {
+            const selectedModule = document.getElementById('module-select').value;
+            let pool = selectedModule === "ALL" ? [...vocabDatabase] : vocabDatabase.filter(item => item.theme === selectedModule);
+            
+            // Spaced Repetition Priority: Prioritize lower mastery & higher error words first
+            sessionQueue = pool.sort((a, b) => a.mastery - b.mastery || (b.errors || 0) - (a.errors || 0) || 0.5 - Math.random());
+            currentIndex = 0;
+            sessionScore = 0;
+            showScreen('learn-screen');
+            loadCard();
+        }
+
+        function loadCard() {
+            answered = false;
+            const data = sessionQueue[currentIndex];
+            
+            document.getElementById('theme-text').innerText = data.theme;
+            document.getElementById('definition-text').innerText = data.def;
+            document.getElementById('sentence-text').innerText = data.sentence;
+            document.getElementById('svg-container').innerHTML = offlineArt[data.word] || offlineArt['classroom'];
+            document.getElementById('question-counter').innerText = `${currentIndex + 1} / ${sessionQueue.length}`;
+            document.getElementById('feedback-area').style.display = 'none';
+
+            const recogMode = document.getElementById('recognition-mode');
+            const recallMode = document.getElementById('recall-mode');
+            const typingInput = document.getElementById('typing-input');
+            const modeBadge = document.getElementById('mode-indicator');
+
+            if (data.mastery === 0) {
+                modeBadge.innerText = "Step 1: Recognition";
+                modeBadge.style.background = "#DBEAFE";
+                modeBadge.style.color = "#1E40AF";
+                recogMode.style.display = 'grid';
+                recallMode.style.display = 'none';
+                recogMode.innerHTML = '';
+                
+                let opts = [...data.options].sort(() => 0.5 - Math.random());
+                opts.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkMCQ(opt, btn, data.word);
+                    recogMode.appendChild(btn);
+                });
+            } else {
+                modeBadge.innerText = "Step 2: Active Recall";
+                modeBadge.style.background = "#FEF3C7";
+                modeBadge.style.color = "#92400E";
+                recogMode.style.display = 'none';
+                recallMode.style.display = 'block';
+                typingInput.value = '';
+                typingInput.disabled = false;
+                typingInput.style.borderColor = "#D1D5DB";
+                typingInput.style.backgroundColor = "white";
+            }
+        }
+
+        function checkMCQ(selectedWord, btnElement, correctWord) {
+            if (answered) return;
+            answered = true;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.style.pointerEvents = 'none');
+
+            const isCorrect = selectedWord.toLowerCase() === correctWord.toLowerCase();
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                sessionQueue[currentIndex].mastery = 1; // Graduate to Active Recall
+            } else {
+                btnElement.classList.add('incorrect');
+                buttons.forEach(b => { if (b.innerText.toLowerCase() === correctWord.toLowerCase()) b.classList.add('correct'); });
+                sessionQueue[currentIndex].mastery = 0;
+                sessionQueue[currentIndex].errors = (sessionQueue[currentIndex].errors || 0) + 1;
+            }
+            showFeedback(isCorrect, correctWord);
+        }
+
+        function checkTypedAnswer() {
+            if (answered) return;
+            const inputEl = document.getElementById('typing-input');
+            if (!inputEl.value.trim()) return;
+            answered = true;
+            inputEl.disabled = true;
+
+            const typedWord = inputEl.value.trim().toLowerCase();
+            const correctWord = sessionQueue[currentIndex].word.toLowerCase();
+            
+            const isCorrect = typedWord === correctWord;
+            if (isCorrect) {
+                inputEl.style.borderColor = "var(--correct)";
+                inputEl.style.backgroundColor = "#D1FAE5";
+                sessionQueue[currentIndex].mastery = 2; // Fully Mastered
+            } else {
+                inputEl.style.borderColor = "var(--incorrect)";
+                inputEl.style.backgroundColor = "#FEE2E2";
+                sessionQueue[currentIndex].mastery = 0; // Revert to Blocked Recognition
+                sessionQueue[currentIndex].errors = (sessionQueue[currentIndex].errors || 0) + 1;
+            }
+            showFeedback(isCorrect, correctWord);
+        }
+
+        function showFeedback(isCorrect, correctWord) {
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackMessage = document.getElementById('feedback-message');
+
+            if (isCorrect) {
+                feedbackArea.style.backgroundColor = '#D1FAE5';
+                feedbackArea.style.color = '#065F46';
+                feedbackMessage.innerText = `✅ Correct! "${correctWord.toUpperCase()}" fits the context.`;
+                streak++;
+                totalScore += 10;
+                sessionScore += 10;
+            } else {
+                feedbackArea.style.backgroundColor = '#FEE2E2';
+                feedbackArea.style.color = '#991B1B';
+                feedbackMessage.innerText = `❌ Corrective Feedback: The target word is "${correctWord.toUpperCase()}". Re-scheduled for spaced review.`;
+                streak = 0;
+            }
+
+            saveProgress();
+            feedbackArea.style.display = 'block';
+        }
+
+        function nextCard() {
+            if (currentIndex < sessionQueue.length - 1) {
+                currentIndex++;
+                loadCard();
+            } else {
+                document.getElementById('final-score').innerText = `+${sessionScore} pts`;
+                showScreen('summary-screen');
+            }
+        }
+
+        function playAudio() {
+            if ('speechSynthesis' in window) {
+                const word = sessionQueue[currentIndex].word;
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-GB';
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Audio is not supported on this device.");
+            }
+        }
+
+        // Network Status Monitor
+        function updateNetworkStatus() {
+            const dot = document.getElementById('net-dot');
+            const txt = document.getElementById('net-text');
+            if (navigator.onLine) {
+                dot.classList.remove('offline');
+                txt.innerText = "Online";
+            } else {
+                dot.classList.add('offline');
+                txt.innerText = "Offline Mode";
+            }
+        }
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        // Register Service Worker for 100% Offline Support on GitHub Pages
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('LexiTrek Offline Service Worker Registered!'))
+                    .catch(err => console.log('Service Worker Error:', err));
+            });
+        }
+
+        window.onload = () => {
+            updateDashboard();
+            updateNetworkStatus();
+        };
+    </script>
+</body>
+</html>
